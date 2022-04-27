@@ -1,0 +1,38 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  mustache:
+    prefix: classpath:/templates/
+    expose-request-attributes: true
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/post?serverTimezone=Asia/Seoul
+    username: cos
+    password: cos1234
+
+  jpa:
+    hibernate:
+      ddl-auto: update #create update none
+    properties:
+      hibernate:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        #show-sql: true
+      format-sql: true
+
+  profiles.active: oauth
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+  #org.hibernate.type: trace
+
+---
+spring.config.activate.on-profile: oauth
