@@ -51,4 +51,12 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberLikePost> memberLikePost;
 
+    /** 내용 수정 업데이트 */
+    public void update(String title, String content, String fileName, PostCategory postCategory){
+        this.title = title;
+        this.content = content;
+        this.fileName = fileName;
+        this.postCategory = postCategory;
+    }
+
 }

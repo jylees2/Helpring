@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -30,11 +31,13 @@ public class PostDto {
         private MultipartFile file;
         private int viewCount;
         private int likeCount;
-        private Member member;
-        private PostCategory postCategory;
+//        private Member member;
+//        private PostCategory postCategory;
 
+        private Long member_id;
+        private Long caegory_id;
         /* Dto -> Entity */
-        public Post toEntity(){
+        public Post toEntity(Member member, PostCategory postCategory){
             Post post = Post.builder()
                     .id(id)
                     .title(title)
@@ -42,19 +45,26 @@ public class PostDto {
                     .fileName(fileName)
                     .viewCount(0)
                     .likeCount(0)
+                    .member(member)
+                    .postCategory(postCategory)
                     .build();
             return post;
         }
 
-        /* Member 정보를 postDto에 담음 */
-        public void setMember(Member member){
-            this.member = member;
-        }
+//        /* Member 정보를 postDto에 담음 */
+//        public void setMember(Member member){
+//            this.member = member;
+//        }
+//
+//        /* PostCategory 정보를 postDto에 담음 */
+//        public void setPostCategory(PostCategory postCategory){
+//            this.postCategory = postCategory;
+//        }
 
-        /* PostCategory 정보를 postDto에 담음 */
-        public void setPostCategory(PostCategory postCategory){
-            this.postCategory = postCategory;
-        }
+        /* 서버가 관리하는 파일명 추가 */
+        public void addFileName(String storeFileName){
+            this.fileName = storeFileName;
+        };
     }
 
     /**
@@ -68,6 +78,7 @@ public class PostDto {
     @NoArgsConstructor
     public static class ResponseDto{
         private Long id;
+        private Long member_id;
         private String title;
         private String content;
         private String writer;
@@ -82,6 +93,7 @@ public class PostDto {
         /* Entity -> Dto */
         public ResponseDto(Post post){
             this.id = post.getId();
+            this.member_id = post.getMember().getId();
             this.title = post.getTitle();
             this.content = post.getContent();
             this.writer = post.getMember().getNickname();
@@ -102,6 +114,7 @@ public class PostDto {
     @NoArgsConstructor
     public static class ResponsePageDto{
         private Long id;
+        private Long member_id;
         private String title;
         private String writer;
         private int viewCount;
@@ -113,6 +126,7 @@ public class PostDto {
         /* Entity -> Dto */
         public ResponsePageDto(Post post){
             this.id = post.getId();
+            this.member_id = post.getMember().getId();
             this.title = post.getTitle();
             this.writer = post.getMember().getNickname();
             this.viewCount = post.getViewCount();
