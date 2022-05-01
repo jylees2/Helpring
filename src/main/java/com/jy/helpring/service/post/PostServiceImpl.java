@@ -1,8 +1,10 @@
 package com.jy.helpring.service.post;
 
-import com.jy.helpring.domain.post.Post;
-import com.jy.helpring.domain.post.PostCategoryRepository;
-import com.jy.helpring.domain.post.PostRepository;
+import com.jy.helpring.domain.file.UploadFile;
+import com.jy.helpring.domain.member.Member;
+import com.jy.helpring.domain.member.MemberRepository;
+import com.jy.helpring.domain.post.*;
+import com.jy.helpring.service.file.FileStore;
 import com.jy.helpring.web.dto.post.PostDto;
 import com.jy.helpring.web.vo.PageVo;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,7 +29,12 @@ public class PostServiceImpl implements PostService{
     private static final int PAGE_POST_COUNT = 10; // 한 화면에 보일 컨텐츠 수
 
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
+    private final PostCategoryRepository postCategoryRepository;
+    private final MemberLikePostRepository memberLikePostRepository;
 
+    /** 파일 저장 처리 객체 **/
+    private final FileStore fileStore;
 
     /* 게시물 전체 리스트 페이징 */
     @Override
@@ -38,6 +49,7 @@ public class PostServiceImpl implements PostService{
         Page<PostDto.ResponsePageDto> postPageList = page.map(
                 post -> new PostDto.ResponsePageDto(
                         post.getId(),
+                        post.getMember().getId(),
                         post.getTitle(),
                         post.getMember().getNickname(),
                         post.getViewCount(),
@@ -64,6 +76,7 @@ public class PostServiceImpl implements PostService{
         Page<PostDto.ResponsePageDto> postPageList = page.map(
                 post -> new PostDto.ResponsePageDto(
                         post.getId(),
+                        post.getMember().getId(),
                         post.getTitle(),
                         post.getMember().getNickname(),
                         post.getViewCount(),
@@ -113,6 +126,7 @@ public class PostServiceImpl implements PostService{
         Page<PostDto.ResponsePageDto> postPageList = page.map(
                 post -> new PostDto.ResponsePageDto(
                         post.getId(),
+                        post.getMember().getId(),
                         post.getTitle(),
                         post.getMember().getNickname(),
                         post.getViewCount(),
@@ -123,5 +137,107 @@ public class PostServiceImpl implements PostService{
         );
 
         return postPageList;
+    }
+
+    /** ================ 게시물 CRUD ================ **/
+
+    /** create **/
+    @Override
+    public Long save(PostDto.RequestDto requestDto, Long member_id) throws IOException {
+
+        /* 파일 저장 */
+        MultipartFile post_file = requestDto.getFile();
+        UploadFile uploadFile = fileStore.storeFile(post_file);
+
+        /* 파일명 추가 */
+        requestDto.addFileName(uploadFile.getStoreFileName());
+
+        /* Member 정보, category 정보 추가 */
+        Long postCategory_id = requestDto.getCaegory_id();
+
+        Member member = memberRepository.findById(member_id).orElseThrow(() ->
+                                            new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
+        PostCategory category = postCategoryRepository.findById(postCategory_id).orElseThrow(() ->
+                                            new IllegalArgumentException("해당 카테고리가 존재하지 않습니다."));
+
+//        requestDto.setMember(member);
+//        requestDto.setPostCategory(category);
+
+        /* RequestDto -> Entity */
+        Post post = requestDto.toEntity(member, category);
+
+        return post.getId();
+    }
+
+    /** update **/
+    @Override
+    public void update(PostDto.RequestDto requestDto, Long member_id, Long post_id) {
+
+        Long category_id = requestDto.getCaegory_id();
+
+        Post post = postRepository.findById(post_id).orElseThrow(() ->
+                new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
+
+        PostCategory category = postCategoryRepository.findById(category_id).orElseThrow(() ->
+                                                       new IllegalArgumentException("해당 카테고리가 존재하지 않습니다."));
+        /* 수정 메서드 호출 */
+        post.update(requestDto.getTitle(), requestDto.getContent(), requestDto.getFileName(), category);
+    }
+
+    /** delete **/
+    @Override
+    public void delete(Long post_id) {
+        Post post = postRepository.findById(post_id).orElseThrow(() ->
+                new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
+        postRepository.delete(post);
+    }
+
+    /** 글 좋아요 **/
+    @Override
+    public boolean saveLike(Long post_id, Long member_id) {
+
+        /** 로그인한 유저가 해당 게시물을 좋아요 했는지 안 했는지 확인 **/
+        if(!findLike(post_id, member_id)){
+
+            /* 좋아요 하지 않은 게시물이면 좋아요 추가, true 반환 */
+            Member member = memberRepository.findById(member_id).orElseThrow(() ->
+                    new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+            Post post = postRepository.findById(post_id).orElseThrow(() ->
+                    new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
+
+            /* 좋아요 엔티티 생성 */
+            MemberLikePost memberLikePost = new MemberLikePost(member, post);
+            memberLikePostRepository.save(memberLikePost);
+            postRepository.plusLike(post_id);
+
+            return true;
+        } else {
+
+            /* 좋아요 한 게시물이면 좋아요 삭제, false 반환 */
+            memberLikePostRepository.deleteByPost_IdAndMember_Id(post_id, member_id);
+            postRepository.minusLike(post_id);
+
+            return false;
+        }
+    }
+
+    /** 글에 좋아요 했는지 확인하는 메서드 **/
+    @Override
+    public boolean findLike(Long post_id, Long member_id) {
+
+        /* 좋아요 한 게시물이 아니라면 false, 좋아요 한 게시물이라면 true */
+        Optional<MemberLikePost> memberLikePost = memberLikePostRepository.findByPost_IdAndMember_Id(post_id, member_id);
+
+        if(memberLikePost.isEmpty()){
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /** 글 조회수 업데이트 **/
+    @Override
+    public void updateView(Long post_id) {
+        postRepository.updateView(post_id);
     }
 }

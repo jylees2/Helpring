@@ -27,4 +27,10 @@ public class MemberLikePost {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    /** MemberLikePost 엔티티 생성 **/
+    public MemberLikePost(Member member, Post post){
+        this.member = member;
+        this.post = post;
+    }
+
 }

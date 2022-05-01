@@ -86,17 +86,23 @@ public class PostController {
                            @AuthenticationPrincipal UserAdapter user,
                            Model model){
 
-        /* 조회수 업데이트 */
+        /* member_id 반환 */
+        Long member_id = user.getMember().getId();
 
         /* 게시물 DTO 반환 */
         PostDto.ResponseDto postResponseDto = postService.findById(post_id);
 
+        /* 로그인한 사용자와 게시물 작성자가 다르다면 조회수 업데이트 */
+        if(member_id != postResponseDto.getMember_id()){
+            postService.updateView(post_id);
+        }
         /* 댓글 DTO 반환 */
         List<CommentDto.ResponseDto> commentListDto = commentService.findListById(post_id);
 
         /* 현재 로그인한 유저가 이 게시물을 좋아요 했는지 안 했는지 여부 확인 */
-        Long member_id = user.getMember().getId(); // user의 member_id 반환
+        boolean like = postService.findLike(post_id, member_id);
 
+        model.addAttribute("like", like);
         model.addAttribute("post", postResponseDto);
         model.addAttribute("commentList", commentListDto);
 
