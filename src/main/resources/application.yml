@@ -29,6 +29,9 @@ spring:
 
   profiles.active: oauth
 
+file:
+  dir = "C:\Users\juyoung\file_upload\";
+
 logging:
   level:
     org.hibernate.SQL: debug
