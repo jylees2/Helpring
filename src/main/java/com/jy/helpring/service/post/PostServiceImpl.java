@@ -1,5 +1,7 @@
 package com.jy.helpring.service.post;
 
+import com.jy.helpring.domain.category.Category;
+import com.jy.helpring.domain.category.CategoryRepository;
 import com.jy.helpring.domain.file.UploadFile;
 import com.jy.helpring.domain.member.Member;
 import com.jy.helpring.domain.member.MemberRepository;
@@ -30,7 +32,7 @@ public class PostServiceImpl implements PostService{
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
-    private final PostCategoryRepository postCategoryRepository;
+    private final CategoryRepository categoryRepository;
     private final MemberLikePostRepository memberLikePostRepository;
 
     /** 파일 저장 처리 객체 **/
@@ -43,7 +45,7 @@ public class PostServiceImpl implements PostService{
         /* 넘겨받은 order_criteria 를 이용해 내림차순하여 Pageable 객체 반환 */
         pageable = PageRequest.of(pageNo, PAGE_POST_COUNT, Sort.by(Sort.Direction.DESC, order_criteria));
         /* category_name에 해당하는 post 페이지 객체 반환 */
-        Page<Post> page = postRepository.findByPostCategory_Name(category_name, pageable);
+        Page<Post> page = postRepository.findByCategory_Name(category_name, pageable);
 
         /* Dto로 변환 */
         Page<PostDto.ResponsePageDto> postPageList = page.map(
@@ -55,7 +57,7 @@ public class PostServiceImpl implements PostService{
                         post.getViewCount(),
                         post.getLikeCount(),
                         post.getCreatedDate(),
-                        post.getPostCategory().getName())
+                        post.getCategory().getName())
         );
 
         return postPageList;
@@ -70,7 +72,7 @@ public class PostServiceImpl implements PostService{
         pageable = PageRequest.of(pageNo, PAGE_POST_COUNT, Sort.by(Sort.Direction.DESC, order_criteria));
 
         /* category_name에 해당하면서 keyword를 포함하는 post 페이지 객체 반환 */
-        Page<Post> page = postRepository.findByPostCategory_NameContainingIgnoreCase(category_name, keyword, pageable);
+        Page<Post> page = postRepository.findByCategory_NameContainingIgnoreCase(category_name, keyword, pageable);
 
         /* Dto로 변환 */
         Page<PostDto.ResponsePageDto> postPageList = page.map(
@@ -82,7 +84,7 @@ public class PostServiceImpl implements PostService{
                         post.getViewCount(),
                         post.getLikeCount(),
                         post.getCreatedDate(),
-                        post.getPostCategory().getName()
+                        post.getCategory().getName()
                 )
         );
 
@@ -107,7 +109,7 @@ public class PostServiceImpl implements PostService{
 
     /* post_id 로 Post 객체를 찾아 PostDto.ResponseDto로 반환 */
     @Override
-    public PostDto.ResponseDto findById(Long post_id) {
+    public PostDto.ResponseDto getById(Long post_id) {
         Post post = postRepository.findById(post_id).orElseThrow(() ->
                             new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
 
@@ -120,7 +122,7 @@ public class PostServiceImpl implements PostService{
         pageable = PageRequest.of(pageNo, PAGE_POST_COUNT, Sort.by(Sort.Direction.DESC, "id"));
 
         /* category_name에 해당하면서 member_id에 해당하는 post 페이지 객체 반환 */
-        Page<Post> page = postRepository.findByPostCategory_NameAndByMember_Id(category_name, member_id, pageable);
+        Page<Post> page = postRepository.findByCategory_NameAndByMember_Id(category_name, member_id, pageable);
 
         /* Dto로 변환 */
         Page<PostDto.ResponsePageDto> postPageList = page.map(
@@ -132,7 +134,7 @@ public class PostServiceImpl implements PostService{
                         post.getViewCount(),
                         post.getLikeCount(),
                         post.getCreatedDate(),
-                        post.getPostCategory().getName()
+                        post.getCategory().getName()
                 )
         );
 
@@ -153,15 +155,15 @@ public class PostServiceImpl implements PostService{
         requestDto.addFileName(uploadFile.getStoreFileName());
 
         /* Member 정보, category 정보 추가 */
-        Long postCategory_id = requestDto.getCaegory_id();
+        Long category_id = requestDto.getCategory_id();
 
         Member member = memberRepository.findById(member_id).orElseThrow(() ->
                                             new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
-        PostCategory category = postCategoryRepository.findById(postCategory_id).orElseThrow(() ->
+        Category category = categoryRepository.findById(category_id).orElseThrow(() ->
                                             new IllegalArgumentException("해당 카테고리가 존재하지 않습니다."));
 
 //        requestDto.setMember(member);
-//        requestDto.setPostCategory(category);
+//        requestDto.setCategory(category);
 
         /* RequestDto -> Entity */
         Post post = requestDto.toEntity(member, category);
@@ -173,12 +175,12 @@ public class PostServiceImpl implements PostService{
     @Override
     public void update(PostDto.RequestDto requestDto, Long member_id, Long post_id) {
 
-        Long category_id = requestDto.getCaegory_id();
+        Long category_id = requestDto.getCategory_id();
 
         Post post = postRepository.findById(post_id).orElseThrow(() ->
                 new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
 
-        PostCategory category = postCategoryRepository.findById(category_id).orElseThrow(() ->
+        Category category = categoryRepository.findById(category_id).orElseThrow(() ->
                                                        new IllegalArgumentException("해당 카테고리가 존재하지 않습니다."));
         /* 수정 메서드 호출 */
         post.update(requestDto.getTitle(), requestDto.getContent(), requestDto.getFileName(), category);

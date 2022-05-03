@@ -1,4 +1,4 @@
-package com.jy.helpring.domain.lecture;
+package com.jy.helpring.domain.category;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,13 +12,11 @@ import javax.persistence.*;
 @Builder
 @Getter
 @Entity
-public class LectureCategory {
-
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
     private String name;
-
 }

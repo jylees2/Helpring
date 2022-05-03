@@ -1,8 +1,8 @@
 package com.jy.helpring.web.dto.post;
 
+import com.jy.helpring.domain.category.Category;
 import com.jy.helpring.domain.member.Member;
 import com.jy.helpring.domain.post.Post;
-import com.jy.helpring.domain.post.PostCategory;
 import com.jy.helpring.web.dto.comment.CommentDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,12 +32,12 @@ public class PostDto {
         private int viewCount;
         private int likeCount;
 //        private Member member;
-//        private PostCategory postCategory;
+//        private Category category;
 
         private Long member_id;
-        private Long caegory_id;
+        private Long category_id;
         /* Dto -> Entity */
-        public Post toEntity(Member member, PostCategory postCategory){
+        public Post toEntity(Member member, Category category){
             Post post = Post.builder()
                     .id(id)
                     .title(title)
@@ -46,7 +46,7 @@ public class PostDto {
                     .viewCount(0)
                     .likeCount(0)
                     .member(member)
-                    .postCategory(postCategory)
+                    .category(category)
                     .build();
             return post;
         }
@@ -55,11 +55,7 @@ public class PostDto {
 //        public void setMember(Member member){
 //            this.member = member;
 //        }
-//
-//        /* PostCategory 정보를 postDto에 담음 */
-//        public void setPostCategory(PostCategory postCategory){
-//            this.postCategory = postCategory;
-//        }
+
 
         /* 서버가 관리하는 파일명 추가 */
         public void addFileName(String storeFileName){
@@ -104,7 +100,7 @@ public class PostDto {
             this.updatedDate = post.getUpdatedDate();
             this.comment = post.getComment().stream().map(CommentDto.ResponseDto::new).collect(Collectors.toList());
 
-            this.categoryName = post.getPostCategory().getName();
+            this.categoryName = post.getCategory().getName();
         }
     }
 
@@ -133,7 +129,7 @@ public class PostDto {
             this.likeCount = post.getLikeCount();
             this.createdDate = post.getCreatedDate();
 
-            this.categoryName = post.getPostCategory().getName();
+            this.categoryName = post.getCategory().getName();
         }
     }
 

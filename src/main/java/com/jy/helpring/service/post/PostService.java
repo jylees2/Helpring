@@ -19,7 +19,7 @@ public interface PostService {
     Page<PostDto.ResponsePageDto> searchPageList(Pageable pageable, int pageNo, String keyword, String category_name, String order_criteria);
 
     /** post_id 에 해당하는 게시물 반환 **/
-    PostDto.ResponseDto findById(Long post_id);
+    PostDto.ResponseDto getById(Long post_id);
 
     /** member_id 에 해당하는 게시물 리스트 페이징 **/
     Page<PostDto.ResponsePageDto> getMyPostPageList(Pageable pageable, int pageNo, Long member_id, String category_name);
