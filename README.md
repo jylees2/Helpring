@@ -19,7 +19,7 @@ _더 이상 혼자 울지 마세요,,💦_
   - 스터디/프로젝트 모집 기능
   - 백엔드 개발 언어 : Java 11
   - 백엔드 개발 환경
-    - `Mac`
+    - `Window`
     - `IntelliJ`
     - `SpringBoot`
     - `gradle`
