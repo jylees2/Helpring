@@ -35,11 +35,11 @@ public class MyLectureImpl implements MyLectureService{
         /** member_id 에 해당하는 Cart 엔티티 리스트를 돌면서 각각 MyLecture 엔티티에 저장 **/
         // 장바구니에 있는 강의를 구매했으므로 전부 MyLecture 엔티티에 저장한다는 의미
         Lecture lecture = new Lecture();
-        for(Cart cart : cartRepository.findAllByMember_Id(member_id)){
+        for(Cart cart : cartRepository.findByMember_Id(member_id)){
             lecture = lectureRepository.findById(cart.getLecture().getId()).orElseThrow(() ->
                                         new IllegalArgumentException("해당 강의가 존재하지 않습니다."));
 
-            // member, lecture 각각 넣은 MyLecture 엔티티 저장장
+            // member, lecture 각각 넣은 MyLecture 엔티티 저장
            myLectureRepository.save(MyLecture.builder().member(member).lecture(lecture).build());
         }
     }
