@@ -2,6 +2,8 @@ package com.jy.helpring.service.review;
 
 import com.jy.helpring.domain.lecture.Lecture;
 import com.jy.helpring.domain.lecture.LectureRepository;
+import com.jy.helpring.domain.member.Member;
+import com.jy.helpring.domain.member.MemberRepository;
 import com.jy.helpring.domain.review.Review;
 import com.jy.helpring.domain.review.ReviewRepository;
 import com.jy.helpring.web.dto.review.ReviewDto;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService{
 
+    private final MemberRepository memberRepository;
     private final LectureRepository lectureRepository;
     private final ReviewRepository reviewRepository;
 
@@ -27,7 +30,7 @@ public class ReviewServiceImpl implements ReviewService{
     public List<ReviewDto.ResponseDto> findAllByLecture(Long lecture_id) {
 
         Lecture lecture = lectureRepository.findById(lecture_id).orElseThrow(() ->
-                                                new IllegalArgumentException("해당 강의가 없습니다."));
+                                                new IllegalArgumentException("해당 강의가 존재하지 않습니다."));
 
         List<Review> reviewList = lecture.getReview();
 
@@ -43,4 +46,31 @@ public class ReviewServiceImpl implements ReviewService{
             return true;
         }
     }
+
+    /** 리뷰 저장 **/
+    @Override
+    public Long save(Long member_id, Long lecture_id, ReviewDto.RequestDto requestDto) {
+
+        Member member = memberRepository.findById(member_id).orElseThrow(() ->
+                new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+        Lecture lecture = lectureRepository.findById(lecture_id).orElseThrow(() ->
+                new IllegalArgumentException("해당 강의가 존재하지 않습니다."));
+
+        Review review = requestDto.toEntity(member, lecture);
+        reviewRepository.save(review);
+
+        return review.getId();
+    }
+
+    /** 리뷰 삭제 **/
+    @Override
+    public void delete(Long review_id) {
+
+        Review review = reviewRepository.findById(review_id).orElseThrow(() ->
+                new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+
+        reviewRepository.delete(review);
+    }
+
+
 }

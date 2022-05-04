@@ -11,4 +11,10 @@ public interface ReviewService {
 
     /** lecture_id, member_id에 대한 리뷰 리스트가 존재하는지 여부 **/
     boolean reviewCheck(Long member_id, Long lecture_id);
+
+    /** 리뷰 저장 **/
+    Long save(Long member_id, Long lecture_id, ReviewDto.RequestDto requestDto);
+
+    /** 리뷰 삭제 **/
+    void delete(Long review_id);
 }
