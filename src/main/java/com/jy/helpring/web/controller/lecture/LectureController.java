@@ -13,6 +13,7 @@ import com.jy.helpring.web.dto.lecture.LectureDto;
 import com.jy.helpring.web.dto.review.ReviewDto;
 import com.jy.helpring.web.vo.PageVo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/lecture")
@@ -34,6 +35,12 @@ public class LectureController {
     private final CategoryService categoryService;
     private final ReviewService reviewService;
     private final CartService cartService;
+
+    /** 강의 저장 폼 반환 (관리자 권한) **/
+    @GetMapping("/")
+    public String save(){
+        return "lecture/lecture-save";
+    }
 
     /** 강의 전체 조회 (카테고리별 & 페이징) **/
     /* /lecture/{category_name}/page={pageNo} */

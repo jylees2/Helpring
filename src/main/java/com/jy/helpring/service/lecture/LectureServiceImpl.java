@@ -1,11 +1,15 @@
 package com.jy.helpring.service.lecture;
 
+import com.jy.helpring.domain.category.Category;
+import com.jy.helpring.domain.category.CategoryRepository;
+import com.jy.helpring.domain.file.UploadFile;
 import com.jy.helpring.domain.lecture.Lecture;
 import com.jy.helpring.domain.lecture.LectureRepository;
 import com.jy.helpring.domain.lecture.MyLecture;
 import com.jy.helpring.domain.lecture.MyLectureRepository;
 import com.jy.helpring.domain.member.Member;
 import com.jy.helpring.domain.member.MemberRepository;
+import com.jy.helpring.service.file.FileStore;
 import com.jy.helpring.web.dto.lecture.LectureDto;
 import com.jy.helpring.web.vo.PageVo;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 
 @Slf4j
@@ -29,6 +36,10 @@ public class LectureServiceImpl implements LectureService{
     private final MemberRepository memberRepository;
     private final LectureRepository lectureRepository;
     private final MyLectureRepository myLectureRepository;
+    private final CategoryRepository categoryRepository;
+
+    /** 파일 저장 처리 객체 **/
+    private final FileStore fileStore;
 
     /** 강의 전체 리스트 페이징 **/
     @Override
@@ -89,6 +100,29 @@ public class LectureServiceImpl implements LectureService{
         } else {
             return true;
         }
+    }
+
+    /** ====================== 관리자 권한 ====================== **/
+
+    /** 강의 저장 **/
+    @Override
+    public Long save(LectureDto.RequestDto requestDto) throws IOException{
+
+        /* 파일 저장 */
+        MultipartFile lecture_file = requestDto.getFile();
+        UploadFile uploadFile = fileStore.storeFile(lecture_file);
+
+        /* 파일명 추가 */
+        requestDto.addFileName(uploadFile.getStoreFileName());
+
+        /* */
+        Long category_id = requestDto.getCategory_id();
+        Category category = categoryRepository.findById(category_id).orElseThrow(() ->
+                new IllegalArgumentException("해당 카테고리가 존재하지 않습니다."));
+
+        Lecture lecture = requestDto.toEntity(category);
+
+        return lectureRepository.save(lecture).getId();
     }
 
 }
