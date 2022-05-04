@@ -19,6 +19,7 @@ public class CategoryServiceImpl implements CategoryService{
 
     private final CategoryRepository categoryRepository;
 
+    /** 카테고리 리스트 반환 **/
     @Override
     public List<CategoryDto.ResponseDto> findList() {
 
