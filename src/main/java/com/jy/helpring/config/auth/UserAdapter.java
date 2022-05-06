@@ -2,9 +2,11 @@ package com.jy.helpring.config.auth;
 
 import com.jy.helpring.domain.member.Member;
 import com.jy.helpring.web.dto.member.MemberDto;
+import lombok.Getter;
 
 import java.util.Map;
 
+@Getter
 public class UserAdapter extends CustomUserDetails{
 
     private Member member;
