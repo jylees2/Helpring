@@ -62,14 +62,14 @@ public class Member extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id asc")
-    private List<MemberWishLecture> wishe;
+    private List<MemberWishLecture> wish;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id asc")
     private List<MyLecture> myLecture;
 
     /* 회원 정보 수정 메서드 */
-    public void update(String nickname, String password){
+    public void modify(String nickname, String password){
         this.nickname = nickname;
         this.password = password;
     }
