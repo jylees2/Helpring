@@ -35,7 +35,7 @@ public class CommentDto {
         }
 
         /* Dto -> Entity */
-        public Comment toEntity() {
+        public Comment toEntity(Member member, Post post) {
             Comment comment = Comment.builder()
                     .id(id)
                     .content(content)
