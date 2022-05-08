@@ -10,13 +10,13 @@ import java.io.IOException;
 public interface PostService {
 
     /** 게시물 리스트 페이징 **/
-    Page<PostDto.ResponsePageDto> getPageList(Pageable pageable, int pageNo, String category_name, String order_criteria);
+    Page<PostDto.ResponsePageDto> getPageList(Pageable pageable, int pageNo, String category_name, String orderCriteria);
 
     /** 페이징 정보 반환 **/
     PageVo getPageInfo(Page<PostDto.ResponsePageDto> postPageList, int pageNo);
 
     /** 게시물 검색 리스트 페이징 **/
-    Page<PostDto.ResponsePageDto> searchPageList(Pageable pageable, int pageNo, String keyword, String category_name, String order_criteria);
+    Page<PostDto.ResponsePageDto> searchPageList(Pageable pageable, int pageNo, String keyword, String category_name, String orderCriteria);
 
     /** post_id 에 해당하는 게시물 반환 **/
     PostDto.ResponseDto getById(Long post_id);

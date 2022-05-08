@@ -40,10 +40,10 @@ public class PostServiceImpl implements PostService{
 
     /* 게시물 전체 리스트 페이징 */
     @Override
-    public Page<PostDto.ResponsePageDto> getPageList(Pageable pageable, int pageNo, String category_name, String order_criteria) {
+    public Page<PostDto.ResponsePageDto> getPageList(Pageable pageable, int pageNo, String category_name, String orderCriteria) {
 
-        /* 넘겨받은 order_criteria 를 이용해 내림차순하여 Pageable 객체 반환 */
-        pageable = PageRequest.of(pageNo, PAGE_POST_COUNT, Sort.by(Sort.Direction.DESC, order_criteria));
+        /* 넘겨받은 orderCriteria 를 이용해 내림차순하여 Pageable 객체 반환 */
+        pageable = PageRequest.of(pageNo, PAGE_POST_COUNT, Sort.by(Sort.Direction.DESC, orderCriteria));
         /* category_name에 해당하는 post 페이지 객체 반환 */
         Page<Post> page = postRepository.findByCategory_Name(category_name, pageable);
 
@@ -66,10 +66,10 @@ public class PostServiceImpl implements PostService{
 
     /* 게시물 검색 리스트 페이징 */
     @Override
-    public Page<PostDto.ResponsePageDto> searchPageList(Pageable pageable, int pageNo, String keyword, String category_name, String order_criteria) {
+    public Page<PostDto.ResponsePageDto> searchPageList(Pageable pageable, int pageNo, String keyword, String category_name, String orderCriteria) {
 
-        /* 넘겨받은 order_criteria 를 이용해 내림차순하여 Pageable 객체 반환 */
-        pageable = PageRequest.of(pageNo, PAGE_POST_COUNT, Sort.by(Sort.Direction.DESC, order_criteria));
+        /* 넘겨받은 orderCriteria 를 이용해 내림차순하여 Pageable 객체 반환 */
+        pageable = PageRequest.of(pageNo, PAGE_POST_COUNT, Sort.by(Sort.Direction.DESC, orderCriteria));
 
         /* category_name에 해당하면서 keyword를 포함하는 post 페이지 객체 반환 */
         Page<Post> page = postRepository.findByCategory_NameContainingIgnoreCase(category_name, keyword, pageable);
@@ -118,7 +118,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public Page<PostDto.ResponsePageDto> getMyPostPageList(Pageable pageable, int pageNo, Long member_id, String category_name) {
-        /* 넘겨받은 order_criteria 를 이용해 내림차순하여 Pageable 객체 반환 */
+        /* 넘겨받은 orderCriteria 를 이용해 내림차순하여 Pageable 객체 반환 */
         pageable = PageRequest.of(pageNo, PAGE_POST_COUNT, Sort.by(Sort.Direction.DESC, "id"));
 
         /* category_name에 해당하면서 member_id에 해당하는 post 페이지 객체 반환 */
@@ -167,8 +167,7 @@ public class PostServiceImpl implements PostService{
 
         /* RequestDto -> Entity */
         Post post = requestDto.toEntity(member, category);
-
-        return post.getId();
+        return postRepository.save(post).getId();
     }
 
     /** update **/

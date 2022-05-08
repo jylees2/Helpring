@@ -9,6 +9,7 @@ import com.jy.helpring.web.dto.comment.CommentDto;
 import com.jy.helpring.web.dto.post.PostDto;
 import com.jy.helpring.web.vo.PageVo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,6 +25,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/community")
+@Slf4j
 public class PostController {
 
     private final PostService postService;
@@ -32,11 +34,11 @@ public class PostController {
     private final CategoryService categoryService;
 
     /** 글 전체 조회 (카테고리별 & 페이징) **/
-    /* /{category_name}/post/page={pageNo}&orderby={order_criteria} */
+    /* /{category_name}/post/page={pageNo}&orderby={orderCriteria} */
     @GetMapping("/{category_name}/post")
     public String readAllPost(@PathVariable(required = false) String category_name,
                           @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
-                          @RequestParam(required = false, defaultValue = "id", value = "orderby") String order_criteria,
+                          @RequestParam(required = false, defaultValue = "id", value = "orderby") String orderCriteria,
                           Pageable pageable,
                           @AuthenticationPrincipal UserAdapter user,
                           Model model){
@@ -62,7 +64,7 @@ public class PostController {
         pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
 
         Page<PostDto.ResponsePageDto> postPageList =
-                postService.getPageList(pageable, pageNo, category_name, order_criteria); // 페이지 객체 생성
+                postService.getPageList(pageable, pageNo, category_name, orderCriteria); // 페이지 객체 생성
         PageVo pageVo = postService.getPageInfo(postPageList, pageNo);
 
         model.addAttribute("postPageList", postPageList);
@@ -101,7 +103,7 @@ public class PostController {
             postService.updateView(post_id);
         }
         /* 댓글 DTO 반환 */
-        List<CommentDto.ResponseDto> commentListDto = commentService.findListById(post_id);
+        List<CommentDto.ResponseDto> commentListDto = commentService.findAllByPost(post_id);
 
         /* 현재 로그인한 유저가 이 게시물을 좋아요 했는지 안 했는지 여부 확인 */
         boolean like = postService.findLike(post_id, member_id);
@@ -128,12 +130,12 @@ public class PostController {
     }
 
     /** 글 검색 (카테고리별) 페이지 **/
-    /* /{category_name}/search/keyword={keyword}&page={pageNo}&orderby={order_criteria} */
+    /* /{category_name}/search/keyword={keyword}&page={pageNo}&orderby={orderCriteria} */
     @GetMapping("/{category_name}/search")
     public String searchByCategory(@PathVariable("category_name") String category_name,
                                    @RequestParam("keyword") String keyword,
                                    @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
-                                   @RequestParam(required = false, defaultValue = "id", value = "orderby") String order_criteria,
+                                   @RequestParam(required = false, defaultValue = "id", value = "orderby") String orderCriteria,
                                    Pageable pageable,
                                    @AuthenticationPrincipal UserAdapter user,
                                    Model model){
@@ -157,7 +159,7 @@ public class PostController {
 
         // 페이지 객체 생성
         Page<PostDto.ResponsePageDto> postResponsePageDto =
-                postService.searchPageList(pageable, pageNo, keyword, category_name, order_criteria);
+                postService.searchPageList(pageable, pageNo, keyword, category_name, orderCriteria);
 
         PageVo pageVo = postService.getPageInfo(postResponsePageDto, pageNo);
 
@@ -208,6 +210,6 @@ public class PostController {
         model.addAttribute("pageNo", pageNo);
         model.addAttribute("pageVo", pageVo);
 
-        return "community/mypost";
+        return "community/myPost";
     }
 }

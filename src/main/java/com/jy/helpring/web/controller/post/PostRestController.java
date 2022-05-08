@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/community")
+@Slf4j
 public class PostRestController {
 
     private final PostService postService;
@@ -57,7 +57,9 @@ public class PostRestController {
 
     /** 글 좋아요 **/
     @PostMapping("/like")
-    public boolean like(Long post_id, Long member_id){
+    public boolean like(Long post_id, @AuthenticationPrincipal UserAdapter user){
+
+        Long member_id = user.getMemberDto().getId();
         // 저장 true, 삭제 false
         boolean result = postService.saveLike(post_id, member_id);
         return result;
