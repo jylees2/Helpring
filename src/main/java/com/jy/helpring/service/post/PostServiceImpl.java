@@ -22,10 +22,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Optional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class PostServiceImpl implements PostService{
 
     private static final int PAGE_POST_COUNT = 10; // 한 화면에 보일 컨텐츠 수
@@ -64,7 +64,7 @@ public class PostServiceImpl implements PostService{
     }
 
 
-    /* 게시물 검색 리스트 페이징 */
+    /** 게시물 검색 리스트 페이징 **/
     @Override
     public Page<PostDto.ResponsePageDto> searchPageList(Pageable pageable, int pageNo, String keyword, String category_name, String orderCriteria) {
 
@@ -116,13 +116,14 @@ public class PostServiceImpl implements PostService{
         return new PostDto.ResponseDto(post);
     }
 
+    /** member_id 에 해당하는 게시물 리스트 페이징 **/
     @Override
     public Page<PostDto.ResponsePageDto> getMyPostPageList(Pageable pageable, int pageNo, Long member_id, String category_name) {
         /* 넘겨받은 orderCriteria 를 이용해 내림차순하여 Pageable 객체 반환 */
         pageable = PageRequest.of(pageNo, PAGE_POST_COUNT, Sort.by(Sort.Direction.DESC, "id"));
 
         /* category_name에 해당하면서 member_id에 해당하는 post 페이지 객체 반환 */
-        Page<Post> page = postRepository.findByCategory_NameAndByMember_Id(category_name, member_id, pageable);
+        Page<Post> page = postRepository.findByCategory_NameAndMember_Id(category_name, member_id, pageable);
 
         /* Dto로 변환 */
         Page<PostDto.ResponsePageDto> postPageList = page.map(

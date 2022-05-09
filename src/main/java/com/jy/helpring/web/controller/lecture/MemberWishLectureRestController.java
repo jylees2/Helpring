@@ -9,10 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/wish")
+@Slf4j
 public class MemberWishLectureRestController {
 
     private final MemberWishLectureService memberWishLectureService;
@@ -36,7 +36,7 @@ public class MemberWishLectureRestController {
     }
 
     /** 위시리스트에서 강의 삭제 **/
-    @DeleteMapping("/{wish_id")
+    @DeleteMapping("/{wish_id}")
     public ResponseEntity delete(@PathVariable Long wish_id){
         memberWishLectureService.deleteWish(wish_id);
         return new ResponseEntity(HttpStatus.OK);

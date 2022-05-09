@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     /** static 관련 인증 설정 무시 **/
     @Override
-    public void init(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) throws Exception {
         web.
                 ignoring().antMatchers("/css/**", "/js/**", "/img/**", "/error");
     }

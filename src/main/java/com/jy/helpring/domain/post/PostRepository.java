@@ -17,7 +17,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByCategory_NameContainingIgnoreCase(String category_name, String keyword, Pageable pageable);
 
     /* 카테고리 name 과 member id로 post 찾기 */
-    Page<Post> findByCategory_NameAndByMember_Id(String category_name, Long member_id, Pageable pageable);
+    Page<Post> findByCategory_NameAndMember_Id(String category_name, Long member_id, Pageable pageable);
 
     /** 좋아요 **/
     @Modifying
