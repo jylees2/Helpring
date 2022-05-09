@@ -16,7 +16,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: helpringservice@gmail.com
-    password: asdf0303!
+    password:
     properties:
       mail.smtp.auth: true
       mail.smtp.ssl.enable: true
