@@ -10,10 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,11 +26,12 @@ public class MemberRestController {
     private final MemberService memberService;
     private final AuthenticationManager authenticationManager;
 
+    /** 회원 정보 수정 **/
     @PutMapping("/member")
-    public ResponseEntity modify(@RequestBody MemberDto.RequestDto dto) {
+    public ResponseEntity update(@RequestBody MemberDto.RequestDto dto) {
 
         /** 회원 정보 변경 **/
-        memberService.userInfoModify(dto);
+        memberService.userInfoUpdate(dto);
 
         log.info("MemberRestController 진입");
 
@@ -47,5 +45,12 @@ public class MemberRestController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    /** 이메일이 DB에 존재하는지 확인 **/
+    @PostMapping("/checkEmail")
+    public boolean checkEmail(@RequestParam("memberEmail") String memberEmail){
+        /* 이메일이 존재하면 true, 존재하지 않으면 false */
+        return memberService.checkEmail(memberEmail);
     }
 }

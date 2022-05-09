@@ -68,13 +68,18 @@ public class Member extends BaseTimeEntity {
     @OrderBy("id asc")
     private List<MyLecture> myLecture;
 
-    /* 회원 정보 수정 메서드 */
-    public void modify(String nickname, String password){
+    /** 회원 정보 수정 메서드 **/
+    public void update(String nickname, String password){
         this.nickname = nickname;
         this.password = password;
     }
 
-    /* 소셜 로그인 시 이미 등록된 회원인 경우 수정 날짜 업데이트, 기존 데이터는 보존 */
+    /** 비밀번호 변경 메서드 **/
+    public void updatePassword(String password){
+        this.password = password;
+    }
+
+    /** 소셜 로그인 시 이미 등록된 회원인 경우 수정 날짜 업데이트, 기존 데이터는 보존 **/
     public Member updateUpdatedDate(){
         this.onPreUpdate(); // 수정 날짜 업데이트
         return this;

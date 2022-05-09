@@ -1,11 +1,13 @@
 package com.jy.helpring.web.controller.member;
 
 import com.jy.helpring.config.auth.UserAdapter;
+import com.jy.helpring.service.mail.MailService;
 import com.jy.helpring.service.member.MemberService;
 import com.jy.helpring.web.dto.member.MemberDto;
 import com.jy.helpring.web.validator.CheckEmailValidator;
 import com.jy.helpring.web.validator.CheckNicknameValidator;
 import com.jy.helpring.web.validator.CheckUsernameValidator;
+import com.jy.helpring.web.vo.MailVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -34,6 +36,7 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MailService mailService;
 
     /** 중복 체크 유효성 검사 **/
     private final CheckUsernameValidator checkUsernameValidator;
@@ -118,16 +121,33 @@ public class MemberController {
     }
 
     /** 회원 수정 페이지 **/
-    @GetMapping("/member/modify")
+    @GetMapping("/member/update")
     public String UserInfoModify(@AuthenticationPrincipal UserAdapter user,
                                  Model model) {
         if (user != null) {
             model.addAttribute("user", user);
         }
 
-        return "member/member-modify";
+        return "member/member-update";
     }
 
     /** 비밀번호 찾기 - 임시 비밀번호 발급 **/
+
+    @GetMapping("/sendPwd")
+    public String sendPwdEmail(@RequestParam("memberEmail") String memberEmail) {
+
+        /** 임시 비밀번호 생성 **/
+        String tmpPassword = memberService.getTmpPassword();
+
+        /** 임시 비밀번호 저장 **/
+        memberService.updatePassword(tmpPassword, memberEmail);
+
+        /** 메일 생성 & 전송 **/
+        MailVo mail = mailService.createMail(tmpPassword, memberEmail);
+        mailService.sendMail(mail);
+
+        return "/member/member-login";
+    }
+
 
 }
