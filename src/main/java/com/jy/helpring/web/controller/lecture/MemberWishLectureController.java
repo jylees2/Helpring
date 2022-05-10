@@ -13,14 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-@Slf4j
 @Controller
 @RequestMapping("/wish")
 @RequiredArgsConstructor
+@Slf4j
 public class MemberWishLectureController {
 
     private final MemberWishLectureService memberWishLectureService;
 
+    /** 내 찜 리스트 반환 **/
     @GetMapping("/myWish")
     public String findAll(@AuthenticationPrincipal UserAdapter user,
                           Model model){

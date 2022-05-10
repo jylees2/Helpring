@@ -13,14 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-@Slf4j
 @Controller
 @RequestMapping("/cart")
 @RequiredArgsConstructor
+@Slf4j
 public class CartController {
 
     private final CartService cartService;
 
+    /** 내 장바구니 조회 **/
     @GetMapping("/")
     public String findAll(@AuthenticationPrincipal UserAdapter user,
                           Model model){

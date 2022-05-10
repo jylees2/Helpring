@@ -15,10 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class CommentServiceImpl implements CommentService{
 
     private final MemberRepository memberRepository;
@@ -56,6 +56,7 @@ public class CommentServiceImpl implements CommentService{
         return comment.getId();
     }
 
+    /** 댓글 수정 **/
     @Override
     public void update(Long comment_id, CommentDto.RequestDto requestDto) {
 
@@ -67,6 +68,7 @@ public class CommentServiceImpl implements CommentService{
         log.info("댓글 수정 완료");
     }
 
+    /** 댓글 삭제 **/
     @Override
     public void delete(Long comment_id) {
         Comment comment = commentRepository.findById(comment_id).orElseThrow(() ->

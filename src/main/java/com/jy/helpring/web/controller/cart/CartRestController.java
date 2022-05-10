@@ -9,14 +9,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @RestController
 @RequestMapping("/cart")
 @RequiredArgsConstructor
+@Slf4j
 public class CartRestController {
 
     private final CartService cartService;
 
+    /** 장바구니에 강의 저장 **/
     @PostMapping("/{lecture_id}")
     public boolean save(@PathVariable Long lecture_id,
                         @AuthenticationPrincipal UserAdapter user){
@@ -32,6 +33,7 @@ public class CartRestController {
         }
     }
 
+    /** 장바구니에서 특정 강의 삭제 **/
     @DeleteMapping("/{cart_id}")
     public ResponseEntity deleteById(@PathVariable Long cart_id){
 

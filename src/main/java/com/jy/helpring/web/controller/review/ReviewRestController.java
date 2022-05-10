@@ -10,17 +10,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @RestController
 @RequestMapping("/lecture")
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewRestController {
 
     private final ReviewService reviewService;
 
     /** 리뷰 업로드 **/
     /* /lecture/{lecture_id}/review */
-    @GetMapping("/{lecture_id}/review")
+    @PostMapping("/{lecture_id}/review")
     public ResponseEntity upload(@PathVariable Long lecture_id,
                                  @RequestBody ReviewDto.RequestDto requestDto,
                                  @AuthenticationPrincipal UserAdapter user){

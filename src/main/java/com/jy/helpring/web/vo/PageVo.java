@@ -1,6 +1,6 @@
 package com.jy.helpring.web.vo;
 
-/* 페이지 정보 */
+/** 페이지 정보 **/
 public class PageVo {
 
     public int totalPage; // 전체 페이지 수
