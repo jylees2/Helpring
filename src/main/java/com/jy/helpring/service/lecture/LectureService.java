@@ -9,7 +9,10 @@ import java.io.IOException;
 
 public interface LectureService {
 
-    /** 게시물 리스트 페이징 **/
+    /** 전체 게시물 리스트 페이징 **/
+    Page<LectureDto.ResponsePageDto> getAllPageList(Pageable pageable, int pageNo);
+
+    /** 카테고리별 게시물 리스트 페이징 **/
     Page<LectureDto.ResponsePageDto> getPageList(Pageable pageable, int pageNo, String category_name);
 
     /** 페이징 정보 반환 **/

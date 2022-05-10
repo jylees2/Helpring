@@ -14,6 +14,7 @@ import com.jy.helpring.web.dto.review.ReviewDto;
 import com.jy.helpring.web.vo.PageVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,10 +24,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/lecture")
+@Slf4j
 public class LectureController {
 
     private final LectureService lectureService;
@@ -37,23 +38,43 @@ public class LectureController {
     private final CartService cartService;
 
     /** 강의 저장 폼 반환 (관리자 권한) **/
-    @GetMapping("/")
+    @GetMapping("/save")
     public String save(){
         return "lecture/lecture-save";
     }
 
-    /** 강의 전체 조회 (카테고리별 & 페이징) **/
+    /** 강의 전체 조회 **/
+    @GetMapping("/")
+    public String readAllLecture(@RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+                                 Pageable pageable,
+                                 @AuthenticationPrincipal UserAdapter user,
+                                 Model model){
+        /* 강의 카테고리 리스트 반환 */
+        List<CategoryDto.ResponseDto> categoryList = categoryService.findList();
+        model.addAttribute("categoryList", categoryList);
+
+        /** ========== 페이징 처리 ========== **/
+        pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
+
+        Page<LectureDto.ResponsePageDto> lecturePageList =
+                lectureService.getAllPageList(pageable, pageNo); // 페이지 객체 생성
+        PageVo pageVo = lectureService.getPageInfo(lecturePageList, pageNo);
+
+        model.addAttribute("lectureList", lecturePageList);
+        model.addAttribute("pageNo", pageNo);
+        model.addAttribute("pageVo", pageVo);
+
+        return "lecture/lecture-all";
+    }
+
+    /** 강의 조회 (카테고리별 & 페이징) **/
     /* /lecture/{category_name}/page={pageNo} */
     @GetMapping("/{category_name}")
-    public String readAllLecture(@PathVariable(required = false) String category_name,
+    public String readLecture(@PathVariable(required = false) String category_name,
                           @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
                           Pageable pageable,
                           @AuthenticationPrincipal UserAdapter user,
                           Model model){
-
-        if(category_name.isEmpty()){
-            category_name = "웹";
-        }
 
         /* 강의 카테고리 리스트 반환 */
         List<CategoryDto.ResponseDto> categoryList = categoryService.findList();
@@ -70,7 +91,7 @@ public class LectureController {
         model.addAttribute("pageNo", pageNo);
         model.addAttribute("pageVo", pageVo);
 
-        return "lecture/lecture-all";
+        return "lecture/lecture-category";
     }
 
     /** 강의 상세 조회 **/
@@ -143,7 +164,7 @@ public class LectureController {
         model.addAttribute("courseList", courseList);
         model.addAttribute("user", user);
 
-        return "lecture/myClass";
+        return "lecture/myLecture";
     }
 
     /** 강의 결제 성공 후 수강 권한 획득 **/
@@ -160,6 +181,6 @@ public class LectureController {
         cartService.deleteAll(member_id);
 
         /* lecture/myClass 로 리다이렉트 */
-        return "redirect:/lecture/myClass";
+        return "redirect:/lecture/lecture";
     }
 }

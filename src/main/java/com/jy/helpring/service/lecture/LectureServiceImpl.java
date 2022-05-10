@@ -5,9 +5,7 @@ import com.jy.helpring.domain.category.CategoryRepository;
 import com.jy.helpring.domain.file.UploadFile;
 import com.jy.helpring.domain.lecture.Lecture;
 import com.jy.helpring.domain.lecture.LectureRepository;
-import com.jy.helpring.domain.lecture.MyLecture;
 import com.jy.helpring.domain.lecture.MyLectureRepository;
-import com.jy.helpring.domain.member.Member;
 import com.jy.helpring.domain.member.MemberRepository;
 import com.jy.helpring.service.file.FileStore;
 import com.jy.helpring.web.dto.lecture.LectureDto;
@@ -25,15 +23,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 
-@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class LectureServiceImpl implements LectureService{
 
     private static final int PAGE_LECTURE_COUNT = 10; // 한 화면에 보일 컨텐츠 수
 
-    private final MemberRepository memberRepository;
     private final LectureRepository lectureRepository;
     private final MyLectureRepository myLectureRepository;
     private final CategoryRepository categoryRepository;
@@ -41,7 +38,30 @@ public class LectureServiceImpl implements LectureService{
     /** 파일 저장 처리 객체 **/
     private final FileStore fileStore;
 
-    /** 강의 전체 리스트 페이징 **/
+    /** 전체 강의 리스트 페이징 **/
+    @Override
+    public Page<LectureDto.ResponsePageDto> getAllPageList(Pageable pageable, int pageNo) {
+
+        /* pageable 객체 반환 */
+        pageable = PageRequest.of(pageNo, PAGE_LECTURE_COUNT, Sort.by(Sort.Direction.DESC, "id"));
+
+        /* category_name에 해당하는 post 페이지 객체 반환 */
+        Page<Lecture> page = lectureRepository.findAll(pageable);
+
+        /* Dto로 변환 */
+        Page<LectureDto.ResponsePageDto> lecturePageList = page.map(
+                lecture -> new LectureDto.ResponsePageDto(
+                        lecture.getId(),
+                        lecture.getTitle(),
+                        lecture.getIntro(),
+                        lecture.getPrice(),
+                        lecture.getFileName())
+        );
+
+        return lecturePageList;
+    }
+
+    /** 카테고리별 강의 리스트 페이징 **/
     @Override
     public Page<LectureDto.ResponsePageDto> getPageList(Pageable pageable, int pageNo, String category_name) {
 
