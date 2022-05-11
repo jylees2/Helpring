@@ -19,10 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,21 +50,25 @@ public class MemberController {
 
     /** 회원가입 폼으로 이동 **/
     @GetMapping("/auth/join")
-    public String join() {
+    public String join(Model model) {
+
+        model.addAttribute("memberDto", new MemberDto.RequestDto());
         return "member/member-join";
     }
 
 
     /** 회원가입 과정 **/
     @PostMapping("/auth/joinProc")
-    public String joinProc(@Valid MemberDto.RequestDto memberDto, BindingResult bindingResult, Model model) {
+    public String joinProc(@ModelAttribute @Valid MemberDto.RequestDto memberDto, BindingResult bindingResult, Model model) {
 
+        log.info("회원가입 과정 진입");
         /** 검증 **/
 
         /** 회원가입 실패 시 **/
         if (bindingResult.hasErrors()) {
             /* 회원 가입 실패 시 입력 데이터 값 유지 */
-            model.addAttribute("member", memberDto);
+            log.info("회원 가입 과정에 에러 존재");
+            model.addAttribute("memberDto", memberDto);
 
             /* 유효성 검사를 통과하지 못 한 필드와 메시지 핸들링 */
             Map<String, String> errorMap = new HashMap<>();
@@ -79,6 +80,7 @@ public class MemberController {
 
             /* Model에 담아 view resolve */
             for (String key : errorMap.keySet()) {
+                log.info(key);
                 model.addAttribute(key, errorMap.get(key));
             }
 
@@ -121,7 +123,7 @@ public class MemberController {
     }
 
     /** 회원 수정 페이지 **/
-    @GetMapping("/member/update")
+    @GetMapping("/settings/update")
     public String UserInfoModify(@AuthenticationPrincipal UserAdapter user,
                                  Model model) {
         if (user != null) {

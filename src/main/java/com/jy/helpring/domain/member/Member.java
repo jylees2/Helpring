@@ -8,10 +8,7 @@ import com.jy.helpring.domain.lecture.MemberWishLecture;
 import com.jy.helpring.domain.lecture.MyLecture;
 import com.jy.helpring.domain.post.MemberLikePost;
 import com.jy.helpring.domain.post.Post;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Getter
+@Setter
 @Entity
 public class Member extends BaseTimeEntity {
     @Id
@@ -48,7 +46,7 @@ public class Member extends BaseTimeEntity {
     @OrderBy("id asc")
     private List<Post> post;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id asc")
     private List<Lecture> lecture;
 
