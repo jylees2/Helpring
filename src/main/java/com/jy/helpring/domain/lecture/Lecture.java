@@ -3,6 +3,7 @@ package com.jy.helpring.domain.lecture;
 import com.jy.helpring.domain.BaseTimeEntity;
 import com.jy.helpring.domain.category.Category;
 import com.jy.helpring.domain.course.Course;
+import com.jy.helpring.domain.member.Member;
 import com.jy.helpring.domain.review.Review;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,6 +47,10 @@ public class Lecture extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Course> course;
