@@ -61,16 +61,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.
-                ignoring().antMatchers("/css/**", "/js/**", "/img/**", "/error");
+                ignoring().antMatchers("/assets/**", "/error");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.
-                csrf().ignoringAntMatchers("/") /* REST API 사용 시 csrf 예외 처리 */
+        http
+                .csrf().ignoringAntMatchers("/rest/**") /* REST API 사용 시 csrf 예외 처리 */
                 .and()
                 .authorizeRequests()
-                .antMatchers("/").permitAll()
+                .antMatchers("/", "/index", "/lecture/**", "/auth/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
