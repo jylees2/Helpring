@@ -8,8 +8,14 @@ public interface MemberService {
 
     void userInfoUpdate(MemberDto.RequestDto memberDto);
 
+    /** member_id로 memberDto 반환 **/
+    MemberDto.ResponseDto getById(Long member_id);
+
+    /** 비밀번호 일치 확인 **/
+    boolean checkPassword(Long member_id, String checkPassword);
+
     /** 이메일 존재 확인 **/
-    boolean checkEmail(String memberEmail);
+    String checkEmail(String memberEmail);
 
     /** 임시 비밀번호 생성 **/
     String getTmpPassword();

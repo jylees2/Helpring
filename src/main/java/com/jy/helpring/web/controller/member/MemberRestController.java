@@ -1,5 +1,6 @@
 package com.jy.helpring.web.controller.member;
 
+import com.jy.helpring.config.auth.UserAdapter;
 import com.jy.helpring.service.member.MemberService;
 import com.jy.helpring.web.dto.member.MemberDto;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -47,10 +50,24 @@ public class MemberRestController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    /** 비밀번호 확인 **/
+    @PostMapping("/checkPwd")
+    public boolean checkPassword(@AuthenticationPrincipal UserAdapter user,
+                                @RequestParam String checkPassword,
+                                Model model){
+
+        log.info("checkPwd 진입");
+        Long member_id = user.getMemberDto().getId();
+        boolean result = memberService.checkPassword(member_id, checkPassword);
+        log.info("결과 : "+result);
+        return result;
+    }
+
     /** 이메일이 DB에 존재하는지 확인 **/
     @PostMapping("/checkEmail")
-    public boolean checkEmail(@RequestParam("memberEmail") String memberEmail){
-        /* 이메일이 존재하면 true, 존재하지 않으면 false */
+    public String checkEmail(@RequestParam("memberEmail") String memberEmail){
+        log.info("checkEmail 진입");
+        /* 이메일이 존재하면 yes, 존재하지 않으면 no */
         return memberService.checkEmail(memberEmail);
     }
 }

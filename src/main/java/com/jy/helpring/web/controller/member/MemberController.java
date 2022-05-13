@@ -126,18 +126,42 @@ public class MemberController {
     @GetMapping("/settings/update")
     public String UserInfoModify(@AuthenticationPrincipal UserAdapter user,
                                  Model model) {
+        Long member_id = user.getMemberDto().getId();
+        MemberDto.ResponseDto responseDto = memberService.getById(member_id);
+        model.addAttribute("member", responseDto);
+
+        /* 카테고리 리스트 */
+
         if (user != null) {
             model.addAttribute("user", user);
         }
-
+        log.info("회원 수정 진입");
         return "member/member-update";
+    }
+
+    /** 회원 수정하기 **/
+    @GetMapping("/checkPwd")
+    public String checkPwdView(){
+        return "member/check-pwd";
+    }
+
+    /** 마이페이지 **/
+    @GetMapping("/mypage")
+    public String findByMemberId(@AuthenticationPrincipal UserAdapter user,
+                                 Model model) {
+
+        Long member_id = user.getMemberDto().getId();
+        MemberDto.ResponseDto responseDto = memberService.getById(member_id);
+        model.addAttribute("member", responseDto);
+        return "member/myPage";
     }
 
     /** 비밀번호 찾기 - 임시 비밀번호 발급 **/
 
-    @GetMapping("/sendPwd")
+    @PostMapping("/sendPwd")
     public String sendPwdEmail(@RequestParam("memberEmail") String memberEmail) {
 
+        log.info("sendPwd 진입");
         /** 임시 비밀번호 생성 **/
         String tmpPassword = memberService.getTmpPassword();
 

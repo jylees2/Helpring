@@ -45,14 +45,39 @@ public class MemberServiceImpl implements MemberService{
         log.info("회원 수정 성공");
     }
 
+    /** 비밀번호 일치 확인 **/
+    @Override
+    public boolean checkPassword(Long member_id, String checkPassword) {
+        Member member = memberRepository.findById(member_id).orElseThrow(() ->
+                new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+        String realPassword = member.getPassword();
+        boolean matches = encoder.matches(checkPassword, realPassword);
+        return matches;
+    }
+
     /** =============== 비밀번호 찾기 : 임시 비밀번호 전송 =============== **/
 
     /** 이메일이 존재하는지 확인 **/
     @Override
-    public boolean checkEmail(String memberEmail) {
+    public String checkEmail(String memberEmail) {
         /* 이메일이 존재하면 true, 이메일이 없으면 false  */
-        boolean checkEmail = memberRepository.existsByEmail(memberEmail);
+        boolean check = memberRepository.existsByEmail(memberEmail);
+
+        String checkEmail = "";
+        if(check) checkEmail = "yes";
+        else checkEmail = "no";
+
         return checkEmail;
+    }
+
+    /** member_id로 memberDto 반환 **/
+    @Override
+    public MemberDto.ResponseDto getById(Long member_id) {
+
+        Member member = memberRepository.findById(member_id).orElseThrow(() ->
+                new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+
+        return new MemberDto.ResponseDto(member);
     }
 
     /** 임시 비밀번호 생성 **/
