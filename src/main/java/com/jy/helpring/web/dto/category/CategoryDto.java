@@ -17,6 +17,8 @@ public class CategoryDto {
         private Long id;
         private String name;
 
+        private String viewName;
+
         /* Dto -> Entity */
         public Category toEntity(){
             Category category = Category.builder()
@@ -35,10 +37,13 @@ public class CategoryDto {
         private Long id;
         private String name;
 
+        private String viewName;
+
         /* Entity -> Dto */
         public ResponseDto(Category category){
             this.id = category.getId();
             this.name = category.getName();
+            this.viewName = category.getViewName();
         }
     }
 }

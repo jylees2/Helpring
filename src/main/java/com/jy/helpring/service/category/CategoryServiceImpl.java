@@ -27,5 +27,13 @@ public class CategoryServiceImpl implements CategoryService{
 
         /* 반환한 Category List 컬렉션 객체를 CategoryDto.ResponseDto List 컬렉션 객체로 변환 */
         return categoryList.stream().map(CategoryDto.ResponseDto::new).collect(Collectors.toList());
+
+    }
+
+    /** 카테고리 뷰 이름 반환 **/
+    @Override
+    public String getViewName(String name) {
+        Category category = categoryRepository.findByName(name);
+        return category.getViewName();
     }
 }

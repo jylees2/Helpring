@@ -9,4 +9,6 @@ public interface CategoryService {
     /** 카테고리 리스트 반환 **/
     List<CategoryDto.ResponseDto> findList();
 
+    /** 카테고리 뷰 이름 반환 **/
+    String getViewName(String name);
 }
