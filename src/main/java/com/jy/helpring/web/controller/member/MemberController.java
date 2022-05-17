@@ -146,7 +146,7 @@ public class MemberController {
     }
 
     /** 마이페이지 **/
-    @GetMapping("/mypage")
+    @GetMapping("/myPage")
     public String findByMemberId(@AuthenticationPrincipal UserAdapter user,
                                  Model model) {
 
@@ -158,10 +158,17 @@ public class MemberController {
 
     /** 비밀번호 찾기 - 임시 비밀번호 발급 **/
 
+//    @GetMapping("/auth/sendPwd")
+//    public String sendPwd(){
+//        log.info("sendPwd 진입");
+//        return "member/find-pwd";
+//    }
+
     @PostMapping("/sendPwd")
     public String sendPwdEmail(@RequestParam("memberEmail") String memberEmail) {
 
-        log.info("sendPwd 진입");
+        log.info("sendPwdEmail 진입");
+
         /** 임시 비밀번호 생성 **/
         String tmpPassword = memberService.getTmpPassword();
 
@@ -172,7 +179,7 @@ public class MemberController {
         MailVo mail = mailService.createMail(tmpPassword, memberEmail);
         mailService.sendMail(mail);
 
-        return "/member/member-login";
+        return "member/member-login";
     }
 
 

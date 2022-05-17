@@ -18,6 +18,7 @@ public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder encoder;
 
+
     /** 회원가입 **/
     @Override
     public void userJoin(MemberDto.RequestDto memberDto) {
@@ -28,6 +29,26 @@ public class MemberServiceImpl implements MemberService{
         memberRepository.save(member);
 
         log.info("회원 저장 성공");
+    }
+
+    /** =============== 회원 수정 =============== **/
+
+    /** 닉네임 중복 체크 **/
+    @Override
+    public boolean checkNickname(Long member_id, String nickname) {
+
+        if(memberRepository.existsByNickname(nickname)){
+            if(memberRepository.findByNickname(nickname).getId() == member_id){
+                // 입력 받은 닉네임의 회원 id와 일치한다면 즉, 현재 닉네임을 그대로 입력한 경우
+                return false;
+            } else{
+                // 다른 사람이 사용하고 있는 닉네임이라면
+                return true;
+            }
+        } else{
+            // 중복된 닉네임이 아니라면
+            return false;
+        }
     }
 
     /** 회원 수정 **/
