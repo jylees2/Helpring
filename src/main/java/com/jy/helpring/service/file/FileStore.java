@@ -17,10 +17,16 @@ public class FileStore {
     @Value("${file.dir}")
     private String fileDir;
 
+    @Value("${file.lecture_dir}")
+    private String lectureFileDir;
+
     /** 전체 파일 경로 */
     public String getFullPath(String fileName){
         return fileDir + fileName;
     }
+
+    /** 강의 저장 파일 경로 **/
+    public String getLectureFullPath(String fileName){return lectureFileDir + fileName;}
 
     /** 파일 저장 **/
     public UploadFile storeFile(MultipartFile multipartFile) throws IOException{
@@ -33,6 +39,21 @@ public class FileStore {
 
         /** 새 파일명으로 파일 저장 **/
         multipartFile.transferTo(new File(getFullPath(storeFileName)));
+
+        return new UploadFile(originalFileName, storeFileName);
+    }
+
+    /** 강의 파일 저장 **/
+    public UploadFile storeLectureFile(MultipartFile multipartFile) throws IOException{
+        if(multipartFile.isEmpty()) return null;
+
+        String originalFileName = multipartFile.getOriginalFilename();
+
+        /** 서버에 저장할 새로운 파일명 생성 **/
+        String storeFileName = createStoreFileName(originalFileName);
+
+        /** 새 파일명으로 파일 저장 **/
+        multipartFile.transferTo(new File(getLectureFullPath(storeFileName)));
 
         return new UploadFile(originalFileName, storeFileName);
     }

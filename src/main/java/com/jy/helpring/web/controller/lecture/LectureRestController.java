@@ -13,19 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/lecture")
+@RequestMapping("/rest/lecture")
+@Slf4j
 public class LectureRestController {
 
-    /** 관리자 권한 - 강의 저장 **/
-    private final LectureService lectureService;
-
-    @PostMapping("/")
-    public ResponseEntity save(@ModelAttribute LectureDto.RequestDto requestDto) throws IOException {
-        lectureService.save(requestDto);
-
-        return new ResponseEntity(HttpStatus.OK);
-    }
 }

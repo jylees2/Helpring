@@ -1,12 +1,10 @@
 package com.jy.helpring.web.dto.lecture;
 
 import com.jy.helpring.domain.category.Category;
+import com.jy.helpring.domain.category.LectureCategory;
 import com.jy.helpring.domain.lecture.Lecture;
 import com.jy.helpring.web.dto.review.ReviewDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -15,12 +13,12 @@ import java.util.stream.Collectors;
 public class LectureDto {
 
     @Getter
+    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
     public static class RequestDto{
 
-        private Long id;
         private String tutor;
         private String title;
         private String intro;
@@ -32,9 +30,8 @@ public class LectureDto {
         private Long category_id;
 
         /* Dto -> Entity */
-        public Lecture toEntity(Category category){
+        public Lecture toEntity(LectureCategory category){
             Lecture lecture = Lecture.builder()
-                    .id(id)
                     .tutor(tutor)
                     .title(title)
                     .intro(intro)
@@ -66,6 +63,7 @@ public class LectureDto {
         private String fileName;
         private int price;
 
+        private String categoryViewName;
         private List<ReviewDto.ResponseDto> review;
 
         private String categoryName;
@@ -94,6 +92,7 @@ public class LectureDto {
         private String intro;
         private int price;
         private String fileName;
+        private String categoryViewName;
 
         /** Entity -> Dto **/
         public ResponsePageDto(Lecture lecture){
@@ -102,6 +101,7 @@ public class LectureDto {
             this.intro = lecture.getIntro();
             this.price = lecture.getPrice();
             this.fileName = lecture.getFileName();
+            this.categoryViewName = lecture.getCategory().getViewName();
         }
     }
 }

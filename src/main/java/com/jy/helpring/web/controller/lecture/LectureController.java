@@ -8,6 +8,7 @@ import com.jy.helpring.service.lecture.LectureService;
 import com.jy.helpring.service.lecture.MyLectureService;
 import com.jy.helpring.service.review.ReviewService;
 import com.jy.helpring.web.dto.category.CategoryDto;
+import com.jy.helpring.web.dto.category.LectureCategoryDto;
 import com.jy.helpring.web.dto.course.CourseDto;
 import com.jy.helpring.web.dto.lecture.LectureDto;
 import com.jy.helpring.web.dto.review.ReviewDto;
@@ -37,12 +38,6 @@ public class LectureController {
     private final ReviewService reviewService;
     private final CartService cartService;
 
-    /** 강의 저장 폼 반환 (관리자 권한) **/
-    @GetMapping("/save")
-    public String save(){
-        return "lecture/lecture-save";
-    }
-
     /** 강의 전체 조회 **/
     @GetMapping("/")
     public String readAllLecture(@RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
@@ -50,7 +45,7 @@ public class LectureController {
                                  @AuthenticationPrincipal UserAdapter user,
                                  Model model){
         /* 강의 카테고리 리스트 반환 */
-        List<CategoryDto.ResponseDto> categoryList = categoryService.findList();
+        List<LectureCategoryDto.ResponseDto> categoryList = categoryService.findLectureList();
         model.addAttribute("categoryList", categoryList);
 
         /** ========== 페이징 처리 ========== **/
@@ -77,7 +72,7 @@ public class LectureController {
                           Model model){
 
         /* 강의 카테고리 리스트 반환 */
-        List<CategoryDto.ResponseDto> categoryList = categoryService.findList();
+        List<LectureCategoryDto.ResponseDto> categoryList = categoryService.findLectureList();
         model.addAttribute("categoryList", categoryList);
 
         /** ========== 페이징 처리 ========== **/
@@ -153,7 +148,7 @@ public class LectureController {
 
     /** 내가 수강 중인 강의 조회 **/
     /* /lecture/mylecture */
-    @GetMapping("/mylecture")
+    @GetMapping("/myLecture")
     public String myLecture(@AuthenticationPrincipal UserAdapter user,
                             Model model){
 

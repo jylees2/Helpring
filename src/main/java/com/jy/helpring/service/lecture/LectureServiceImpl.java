@@ -1,12 +1,11 @@
 package com.jy.helpring.service.lecture;
 
-import com.jy.helpring.domain.category.Category;
-import com.jy.helpring.domain.category.CategoryRepository;
+import com.jy.helpring.domain.category.LectureCategory;
+import com.jy.helpring.domain.category.LectureCategoryRepository;
 import com.jy.helpring.domain.file.UploadFile;
 import com.jy.helpring.domain.lecture.Lecture;
 import com.jy.helpring.domain.lecture.LectureRepository;
 import com.jy.helpring.domain.lecture.MyLectureRepository;
-import com.jy.helpring.domain.member.MemberRepository;
 import com.jy.helpring.service.file.FileStore;
 import com.jy.helpring.web.dto.lecture.LectureDto;
 import com.jy.helpring.web.vo.PageVo;
@@ -33,7 +32,7 @@ public class LectureServiceImpl implements LectureService{
 
     private final LectureRepository lectureRepository;
     private final MyLectureRepository myLectureRepository;
-    private final CategoryRepository categoryRepository;
+    private final LectureCategoryRepository lectureCategoryRepository;
 
     /** 파일 저장 처리 객체 **/
     private final FileStore fileStore;
@@ -55,7 +54,9 @@ public class LectureServiceImpl implements LectureService{
                         lecture.getTitle(),
                         lecture.getIntro(),
                         lecture.getPrice(),
-                        lecture.getFileName())
+                        lecture.getFileName(),
+                        lecture.getCategory().getViewName()
+                )
         );
 
         return lecturePageList;
@@ -78,7 +79,9 @@ public class LectureServiceImpl implements LectureService{
                         lecture.getTitle(),
                         lecture.getIntro(),
                         lecture.getPrice(),
-                        lecture.getFileName())
+                        lecture.getFileName(),
+                        lecture.getCategory().getViewName()
+                )
         );
 
         return lecturePageList;
@@ -130,14 +133,14 @@ public class LectureServiceImpl implements LectureService{
 
         /* 파일 저장 */
         MultipartFile lecture_file = requestDto.getFile();
-        UploadFile uploadFile = fileStore.storeFile(lecture_file);
+        UploadFile uploadFile = fileStore.storeLectureFile(lecture_file);
 
         /* 파일명 추가 */
         requestDto.addFileName(uploadFile.getStoreFileName());
 
         /* */
         Long category_id = requestDto.getCategory_id();
-        Category category = categoryRepository.findById(category_id).orElseThrow(() ->
+        LectureCategory category = lectureCategoryRepository.findById(category_id).orElseThrow(() ->
                 new IllegalArgumentException("해당 카테고리가 존재하지 않습니다."));
 
         Lecture lecture = requestDto.toEntity(category);

@@ -8,14 +8,14 @@ server:
       force: true
 
 spring:
-  mustache:
+  thymeleaf:
+    cache: false
     prefix: classpath:/templates/
-    expose-request-attributes: true
 
   mail:
     host: smtp.gmail.com
     port: 587
-    username: helpringservice@gmail.com
+    username: helpringproject@gmail.com
     password:
     properties:
       mail.smtp.auth: true
@@ -40,6 +40,7 @@ spring:
 
 file:
   dir: C:\intellij\workspace\helpring\helpring\src\main\resources\static\post_upload\
+  lecture_dir: C:\intellij\workspace\helpring\helpring\src\main\resources\static\lecture_upload\
 
 logging:
   level:

@@ -2,6 +2,7 @@ package com.jy.helpring.domain.lecture;
 
 import com.jy.helpring.domain.BaseTimeEntity;
 import com.jy.helpring.domain.category.Category;
+import com.jy.helpring.domain.category.LectureCategory;
 import com.jy.helpring.domain.course.Course;
 import com.jy.helpring.domain.member.Member;
 import com.jy.helpring.domain.review.Review;
@@ -46,7 +47,7 @@ public class Lecture extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    private Category category;
+    private LectureCategory category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
