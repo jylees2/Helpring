@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extra/spring-security">
+<th:block th:replace="/layout/fragment/head :: headFragment"></th:block>
+<head>
+    <!-- jQuery -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+    <!-- iamport.payment.js -->
+    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.8.js"></script>
+
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+<body>
+<div id="wrapper">
+    <div id="content-wrapper" class="d-flex flex-column">
+        <header class="bg-gradient-dark">
+            <th:block th:replace="/layout/fragment/navbar :: navbarFragment"></th:block>
+            <div class="page-header min-vh-65"
+                 style="background-image: url('https://cdn.pixabay.com/photo/2017/08/10/08/47/laptop-2620118_960_720.jpg')">
+                <span class="mask bg-gradient-dark opacity-6"></span>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8 text-center mx-auto my-auto">
+                            <h1 class="text-white">장바구니</h1>
+                            <p class="lead mb-4 text-white opacity-8">강의를 구매해보세요!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 강의 구매 시 필요한 구매자 정보 -->
+        <input type="hidden" th:value="${user.email}" id="memberEmail">
+        <input type="hidden" th:value="${user.nickname}" id="memberName">
+
+        <div th:unless="${checkCart}" class="row">
+                <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n3">
+                    <a th:href="@{/lecture/}" class="h3">장바구니에 담은 강의가 없어요. 듣고 싶은 강의를 담아보세요!</a>
+                </div>
+        </div>
+
+        <div class="row" th:if="${checkCart}">
+            <div class="col-lg-8">
+                <div class="card card-body blur shadow-blur mx-1 mx-md-1 mt-n3">
+
+                    <form action="/lecture/payment" method="post" id="payment">
+                        <div id="cartLength" class="row">
+                            <div class="col-md-3 mb-5" th:each="cart:${cartList}">
+                                <div class="card h-100">
+                                    <a th:href="@{|/onClass/${cart.lecture_id}|}">
+
+                                        <input type="hidden" th:value="${cart.lecture_id}" name="lectureId">
+
+                                        <div class="card-body">
+                                            <p class="card-text text-center">
+                                                <img class="img-fluid rounded mb-4 mb-lg-0"
+                                                     th:src="@{|/lecture_upload/${cart.lecture_fileName}|}"
+                                                     alt="강의 썸네일" width="150" height="100"/></p>
+                                            <p class="card-text text-center h6" th:text="${cart.lecture_title}"></p>
+                                        </div>
+                                    </a>
+                                    <div class="card-footer text-center">
+                                        <span class="card-text" id="onClassPrice" th:text="${cart.lecture_price}"></span>
+                                        <span>원</span>
+                                    </div>
+                                    <button type="button" class="btn btn-danger btn-sm"
+                                            th:onclick="deleteById([[${cart.id}]])">장바구니에서 삭제
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card card-body blur shadow-blur mx-1 mx-md-1 mt-n3">
+                    <div class="h4">총계 : &#8361;<span th:text="*{totalPrice}" th:value="*{totalPrice}"></span></div>
+<!--                    <div class="h6">포인트 사용 :<input class="form-control" type="number" min="0" th:max="*{memberPoint}"-->
+<!--                                                   id="point_use_value" name="pointUse" onblur="point_use()" value="0">-->
+<!--                        <span th:text="*{'보유 포인트 : '+memberPoint +'point'}"></span>-->
+<!--                    </div>-->
+<!--                    <span class="h6" id="pointApply"></span>-->
+                    <div class="h3"> 결제금액 : <span id="applyPrice" th:text="*{totalPrice}"></span></div>
+<!--                    <input type="hidden" id="point_value" value="0">-->
+                    <input type="hidden" id="totalPrice" th:value="*{totalPrice}">
+                    <input type="hidden" id="applyValue" th:value="*{totalPrice}">
+                    <button type="button" class="btn btn-success" onclick="requestPay()" value="수강권 구매">장바구니 결제</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    const header = $("meta[name='_csrf_header']").attr('content');
+    const token = $("meta[name='_csrf']").attr('content');
+
+    /** 결제 **/
+    // 결제 금액, 구매자의 이름, 이메일
+    const priceAmount = $('#totalPrice').val();
+    const buyerMemberEmail = $('#memberEmail').val();
+    const buyerMemberName = $('#memberName').val();
+    // const form = document.getElementById("payment");
+
+    console.log(priceAmount);
+    console.log(buyerMemberName);
+    console.log(buyerMemberEmail);
+    const IMP = window.IMP;
+    IMP.init('imp99053400');
+
+    function requestPay() {
+        // IMP.request_pay(param, callback) 결제창 호출
+        IMP.request_pay({ // param
+            pg: "kakaopay.TC0ONETIME",
+            pay_method: "card",
+            merchant_uid: 'cart_' + new Date().getTime(),
+            name: "Helpring 강의",
+            amount: priceAmount,
+            buyer_email: buyerMemberEmail,
+            buyer_name: buyerMemberName,
+
+        }, function (rsp) { // callback
+
+            /** 결제 검증 **/
+            $.ajax({
+                type: 'POST',
+                url: '/verifyIamport/'+rsp.imp_uid,
+                beforeSend: function(xhr){
+                    xhr.setRequestHeader(header, token);
+                }
+            }).done(function(result){
+
+                // rsp.paid_amount와 result.response.amount(서버 검증) 비교 후 로직 실행
+                if(rsp.paid_amount === result.response.amount){
+                    alert("결제가 완료되었습니다.");
+                    $.ajax({
+                        type:'POST',
+                        url:'/lecture/payment',
+                        beforeSend: function(xhr){
+                            xhr.setRequestHeader(header, token);
+                        }
+                    }).done(function() {
+                        window.location.reload();
+                    }).fail(function(error){
+                            alert(JSON.stringify(error));
+                    })
+                } else{
+                    alert("결제에 실패했습니다."+"에러코드 : "+rsp.error_code+"에러 메시지 : "+rsp.error_message);
+
+                }
+            })
+        });
+    };
+
+    /** 장바구니에서 삭제 **/
+    function deleteById(cartId) {
+        $.ajax({
+            type: 'DELETE',
+            url: '/rest/cart/'+cartId,
+
+        }).done(function(){
+            alert("삭제되었습니다.");
+            window.location.reload();
+        }).fail(function(error){
+            alert(JSON.stringify(error));
+        });
+    };
+</script>
