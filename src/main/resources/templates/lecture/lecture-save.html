@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="/layout/fragment/head :: headFragment"></th:block>
+<body>
+<div id="wrapper">
+        <header class="bg-gradient-dark">
+            <th:block th:replace="/layout/fragment/navbar :: navbarFragment"></th:block>
+            <div class="page-header min-vh-65"
+                 style="background-image: url('https://cdn.pixabay.com/photo/2017/08/10/08/47/laptop-2620118_960_720.jpg')">
+                <span class="mask bg-gradient-dark opacity-6"></span>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8 text-center mx-auto my-auto">
+                            <h1 class="text-white">강의 업로드</h1>
+                            <p class="lead mb-4 text-white opacity-8">강의를 올려봅시다</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+    <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n3">
+        <form th:action="@{/admin/lecture/save}" id="lectureUploadForm" class = "form-control" method="post"
+              enctype="multipart/form-data" onsubmit="return save()">
+            <input type="hidden" th:name="_csrf" th:value="${_csrf.token}"/>
+
+            <div class="container my-auto" width="200px">
+                <div class="card w-80">
+                    <div class="p-5">
+                        <div>
+                            <span th:each="category: ${categoryList}">
+                                <input type="radio" class="btn-check" th:value="${category.id}"
+                                       th:name="category_id" th:id="${category.name}" autocomplete="off" checked required>
+                                <label class="btn btn-outline-primary" th:for="${category.name}"
+                                       th:text="${category.viewName}"></label>
+                            </span>
+                        </div>
+                        <div>
+                            <label class="form-label">선생님</label>
+                            <input type="text" class="form-control" th:name="tutor">
+                        </div>
+                        <div>
+                            <label class="form-label">제목</label>
+                            <input type="text" class="form-control" id='title' th:name="title">
+                        </div>
+                        <div>
+                            <label class="form-label">한 줄 소개</label>
+                            <input type="text" class="form-control" id="intro" th:name="intro">
+                        </div>
+                        <div class="input-group mb-4 input-group-static">
+                            <textarea id="content" type="text" class="form-control"
+                                      th:name="content" rows="5"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <label class="form-label">수업 가격</label>
+                            </div>
+                            <div class="col-3">
+                                <input type="text" id="price" class="form-control"
+                                       th:name="price">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3"><h6>파일 업로드</h6></div>
+                            <div class="col-3">
+                                <input class="form-control" type="file" th:name="file">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" id="btn-update" class="btn btn btn-info bi">강의 업로드</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<th:block th:replace="/layout/fragment/footer :: footerFragment"></th:block>
+
+<!-- 공통 스크립트-->
+<th:block th:replace="/layout/fragment/script :: scriptFragment"></th:block>
+</body>
+<script>
+
+    function save(){
+        const data = {
+            title : $('#title').val(),
+            intro : $('#intro').val(),
+            content: $('#content').val()
+        };
+
+        const confirmCheck = confirm("강의를 업로드하시겠습니까?");
+        if(confirmCheck === true){
+
+            /* 공백과 빈 문자열 체크 */
+            if(!data.title || data.title.trim() === "" || !data.content || data.content.trim() === "" ){
+                alert("공백 또는 입력하지 않은 부분이 있습니다.");
+                return false;
+            } else{
+                return true;
+            }
+        }
+        return false;
+    }
+</script>
+</html>

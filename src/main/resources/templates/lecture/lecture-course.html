@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extra/spring-security">
+<style>
+    #background {
+        background-color: rgba(20,26,52,0.95);
+    }
+</style>
+<th:block th:replace="/layout/fragment/head :: headFragment"></th:block>
+<body>
+<th:block th:replace="/layout/fragment/navbar :: navbarFragment"></th:block>
+<div class="bg-gradient-dark">
+    <div class="page-header min-vh-100" id="background">
+        <div class="container">
+            <div class="row mt-6">
+                <span class="h5 text-white" th:text="${course.categoryViewName +' > '+course.lecture_title}"></span>
+                <h1 class="text-white" th:text="${course.title}"></h1>
+
+                <div class="col-lg-6">
+
+                    <div class="ratio ratio-16x9">
+                        <iframe th:src="@{/course_upload/}+${course.fileName}" allowfullscreen></iframe>
+                    </div>
+
+                    <div class="card card-body mt-3 mx-2">
+                        <div class="h5" th:text="'강의 제목 : '+${course.section}"></div>
+                        <div class="text-dark" th:utext="${course.content}"></div>
+                    </div>
+
+                </div>
+                <div class="col-lg-6">
+                    <ol class="list-group">
+                        <span th:each="course, courseStat:${courseList}">
+                           <a th:href="@{|/lecture/course/${course.id}|}">
+                                <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
+                                    <div class="ms-2 me-auto">
+                                        <div class="text-dark"
+                                             th:text="${courseStat.count +'. '+course.section}"></div>
+                                        <div class="text-bold" th:text="${course.title}"></div>
+
+                                    </div>
+                                       <img src="/assets/img/playButton.png" alt="재생 버튼" width="45px"
+                                            height="45px">
+                                </li>
+                           </a>
+                        </span>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
