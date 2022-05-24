@@ -9,6 +9,9 @@ public interface MemberWishLectureService {
     /** 찜 리스트 반환 **/
     List<MemberWishLectureDto.ResponseDto> findByMemberId(Long member_id);
 
+    /** member_id에 해당하는 찜 리스트 존재 여부 확인 **/
+    boolean checkHaveWish(Long member_id);
+
     /** member_id가 lecture_id를 찜 리스트에 추가했는지 확인 **/
     boolean checkWish(Long member_id, Long lecture_id);
 

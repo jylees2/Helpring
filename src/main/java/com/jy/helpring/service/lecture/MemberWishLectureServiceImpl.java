@@ -37,6 +37,12 @@ public class MemberWishLectureServiceImpl implements MemberWishLectureService{
         return wishList.stream().map(MemberWishLectureDto.ResponseDto::new).collect(Collectors.toList());
     }
 
+    /** member_id에 해당하는 찜 리스트 존재 여부 확인 **/
+    @Override
+    public boolean checkHaveWish(Long member_id) {
+        return memberWishLectureRepository.existsByMember_Id(member_id);
+    }
+
     /** 해당 강의를 찜했는지 확인 **/
     @Override
     public boolean checkWish(Long member_id, Long lecture_id) {

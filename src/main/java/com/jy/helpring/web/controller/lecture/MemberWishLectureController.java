@@ -29,6 +29,9 @@ public class MemberWishLectureController {
         Long member_id = user.getMemberDto().getId();
         List<MemberWishLectureDto.ResponseDto> wishList = memberWishLectureService.findByMemberId(member_id);
 
+        boolean checkWish = memberWishLectureService.checkHaveWish(member_id);
+
+        model.addAttribute("checkWish", checkWish);
         model.addAttribute("wishList", wishList);
 
         return "wish/myWish";
