@@ -61,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.
-                ignoring().antMatchers("/assets/**", "/error");
+                ignoring().antMatchers("/assets/**", "/error", "/post_upload/**", "/lecture_upload/**");
     }
 
     @Override
@@ -70,7 +70,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().ignoringAntMatchers("/rest/**") /* REST API 사용 시 csrf 예외 처리 */
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/index", "/lecture/**", "/auth/**").permitAll()
+                .antMatchers("/", "/index", "/lecture/**", "/community/post/**", "/auth/**",
+                        "/sendPwd/**", "/rest/checkEmail/**","/rest/sendPwd/**").permitAll()
+                .antMatchers("/admin/**").access("hasRole('ADMIN')")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
