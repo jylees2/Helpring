@@ -26,27 +26,31 @@ public class CartController {
     public String findAll(@AuthenticationPrincipal UserAdapter user,
                           Model model){
 
+        /* 현재 로그인한 유저, 즉 구매자 정보 반환 */
         Long member_id = user.getMemberDto().getId();
+        model.addAttribute("user", user.getMemberDto());
 
-        /** 카트 리스트  반환 **/
-        List<CartDto.ResponseDto> cartList = cartService.getListMemberId(member_id);
+        /* 장바구니 존재 여부 확인 */
+        boolean checkCart = cartService.checkHaveCart(member_id);
 
-        boolean checkCart = true;
-        if(!cartList.isEmpty()){
+        if(checkCart){
+
             /* 장바구니가 존재한다면 */
             int totalPrice = 0;
 
+            /* 장바구니 목록 반환 */
+            List<CartDto.ResponseDto> cartList = cartService.getListMemberId(member_id);
+
+            // 가격 총계 계산
             for(CartDto.ResponseDto cart : cartList){
                 totalPrice += cart.getLecture_price();
             }
 
             model.addAttribute("cartList", cartList);
             model.addAttribute("totalPrice", totalPrice);
-        } else {
-            /* 장바구니가 비어있다면 */
-            checkCart = false;
         }
 
+        /* 장바구니 존재 여부 반환 */
         model.addAttribute("checkCart", checkCart);
 
         return "cart/cart";

@@ -25,6 +25,13 @@ public class CartServiceImpl implements CartService{
     private final MemberRepository memberRepository;
     private final LectureRepository lectureRepository;
 
+    /** member_id에 해당하는 장바구니 존재 여부 확인 - 유저의 장바구니 목록이 존재하는지 확인 **/
+    @Override
+    public boolean checkHaveCart(Long member_id) {
+
+        return cartRepository.existsByMember_Id(member_id);
+    }
+
     /** member_id의 장바구니 전부 삭제 **/
     @Override
     public void deleteAll(Long member_id) {
@@ -52,15 +59,11 @@ public class CartServiceImpl implements CartService{
         return cartList.stream().map(CartDto.ResponseDto::new).collect(Collectors.toList());
     }
 
-    /** member_id, lecture_id에 해당하는 cart가 존재하는지 확인 **/
+    /** member_id, lecture_id에 해당하는 cart가 존재하는지 확인 - 유저가 특정 강의를 장바구니에 넣었는지 확인 **/
     @Override
     public boolean checkCart(Long member_id, Long lecture_id) {
 
-        Optional<Cart> cart = cartRepository.findByMember_IdAndLecture_Id(member_id, lecture_id);
-        if(cart.isEmpty()){
-            return false;
-        }
-        return true;
+        return cartRepository.existsByMember_IdAndLecture_Id(member_id, lecture_id);
     }
 
     /** 장바구니 저장 **/

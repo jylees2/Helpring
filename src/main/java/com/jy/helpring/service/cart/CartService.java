@@ -6,6 +6,9 @@ import java.util.List;
 
 public interface CartService {
 
+    /** member_id에 해당하는 장바구니 존재 여부 확인 - 유저의 장바구니 목록이 존재하는지 확인 **/
+    boolean checkHaveCart(Long member_id);
+
     /** 장바구니에서 모든 강의 삭제 **/
     void deleteAll(Long member_id);
 
