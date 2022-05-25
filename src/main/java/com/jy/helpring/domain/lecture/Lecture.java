@@ -1,7 +1,6 @@
 package com.jy.helpring.domain.lecture;
 
 import com.jy.helpring.domain.BaseTimeEntity;
-import com.jy.helpring.domain.category.Category;
 import com.jy.helpring.domain.category.LectureCategory;
 import com.jy.helpring.domain.course.Course;
 import com.jy.helpring.domain.member.Member;

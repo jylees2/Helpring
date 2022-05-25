@@ -21,18 +21,22 @@ public class MemberWishLectureController {
 
     private final MemberWishLectureService memberWishLectureService;
 
-    /** 내 찜 리스트 반환 **/
+    /** 내 찜 목록 반환 **/
     @GetMapping("/myWish")
     public String findAll(@AuthenticationPrincipal UserAdapter user,
                           Model model){
 
         Long member_id = user.getMemberDto().getId();
-        List<MemberWishLectureDto.ResponseDto> wishList = memberWishLectureService.findByMemberId(member_id);
 
+        /* 내가 찜한 목록이 존재하는지 확인 */
         boolean checkWish = memberWishLectureService.checkHaveWish(member_id);
 
+        if(checkWish){
+            List<MemberWishLectureDto.ResponseDto> wishList = memberWishLectureService.findByMemberId(member_id);
+            model.addAttribute("wishList", wishList);
+        }
+
         model.addAttribute("checkWish", checkWish);
-        model.addAttribute("wishList", wishList);
 
         return "wish/myWish";
     }

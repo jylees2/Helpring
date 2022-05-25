@@ -37,27 +37,20 @@ public class MemberWishLectureServiceImpl implements MemberWishLectureService{
         return wishList.stream().map(MemberWishLectureDto.ResponseDto::new).collect(Collectors.toList());
     }
 
-    /** member_id에 해당하는 찜 리스트 존재 여부 확인 **/
+    /** member_id에 해당하는 찜 리스트 존재 여부 확인 - 유저의 찜 목록이 존재하는지 확인 **/
     @Override
     public boolean checkHaveWish(Long member_id) {
         return memberWishLectureRepository.existsByMember_Id(member_id);
     }
 
-    /** 해당 강의를 찜했는지 확인 **/
+    /** member_id가 lecture_id를 찜 리스트에 추가했는지 확인 - 유저가 특정 강의를 찜했는지 확인 **/
     @Override
     public boolean checkWish(Long member_id, Long lecture_id) {
 
-        Optional<MemberWishLecture> wish = memberWishLectureRepository.findByMember_IdAndLecture_Id(member_id, lecture_id);
-        if(!wish.isEmpty()){
-            /* 찜한 강의라면 */
-            return true;
-        } else{
-            /* 찜한 강의가 아니라면 */
-            return false;
-        }
+        return memberWishLectureRepository.existsByMember_IdAndLecture_Id(member_id, lecture_id);
     }
 
-    /** 찜 리스트에 추가 **/
+    /** 찜 목록에 강의 추가 **/
     @Override
     public void save(Long member_id, Long lecture_id) {
 
@@ -69,13 +62,13 @@ public class MemberWishLectureServiceImpl implements MemberWishLectureService{
         memberWishLectureRepository.save(MemberWishLecture.builder().member(member).lecture(lecture).build());
     }
 
-    /** 찜 리스트에서 member_id, lecture_id에 해당하는 찜 삭제 **/
+    /** 강의 상세 페이지에서 member_id, lecture_id에 해당하는 찜 삭제 - 유저가 특정 강의 찜 취소 **/
     @Override
     public void deleteById(Long member_id, Long lecture_id) {
         memberWishLectureRepository.deleteByMember_IdAndLecture_Id(member_id, lecture_id);
     }
 
-    /** 찜 리스트에서 wish_id에 해당하는 찜 삭제 **/
+    /** 찜 목록에서 wish_id에 해당하는 찜 삭제 - 유저가 특정 강의 찜 취소 **/
     @Override
     public void deleteWish(Long wish_id) {
         MemberWishLecture wish = memberWishLectureRepository.findById(wish_id).orElseThrow(() ->

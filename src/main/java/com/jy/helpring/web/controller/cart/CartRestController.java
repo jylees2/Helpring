@@ -10,14 +10,14 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/rest/cart")
 @RequiredArgsConstructor
 @Slf4j
 public class CartRestController {
 
     private final CartService cartService;
 
-    /** 장바구니에 강의 저장 **/
+    /** 강의 상세 페이지에서 장바구니에 강의 저장 **/
     @PostMapping("/{lecture_id}")
     public boolean save(@PathVariable Long lecture_id,
                         @AuthenticationPrincipal UserAdapter user){
@@ -33,11 +33,12 @@ public class CartRestController {
         }
     }
 
-    /** 장바구니에서 특정 강의 삭제 **/
+    /** 장바구니 페이지에서 특정 강의 삭제 **/
     @DeleteMapping("/{cart_id}")
     public ResponseEntity deleteById(@PathVariable Long cart_id){
 
         cartService.deleteById(cart_id);
+
         return new ResponseEntity(HttpStatus.OK);
     }
 }

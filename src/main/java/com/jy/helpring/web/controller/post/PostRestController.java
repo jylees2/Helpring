@@ -14,28 +14,29 @@ import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/community")
+@RequestMapping("/rest/community/post")
 @Slf4j
 public class PostRestController {
 
     private final PostService postService;
 
-    /** create **/
-    @PostMapping("/post")
-    public Long save(@ModelAttribute PostDto.RequestDto dto,
-                               @AuthenticationPrincipal UserAdapter user) throws IOException {
-
-        Long memberId = user.getMember().getId();
-
-        // 글 저장
-        Long saveId = postService.save(dto, memberId);
-
-        return saveId;
-    }
+//    /** create **/
+//    @PostMapping("/post")
+//    public Long save(@Validated @ModelAttribute PostDto.RequestDto postDto,
+//                               @AuthenticationPrincipal UserAdapter user) throws IOException {
+//
+//        log.info("/community/post 진입");
+//        Long memberId = user.getMember().getId();
+//
+//        // 글 저장
+//        Long saveId = postService.save(postDto, memberId);
+//
+//        return saveId;
+//    }
 
     /** update **/
-    @PutMapping("/post/{post_id}")
-    public ResponseEntity update(@ModelAttribute PostDto.RequestDto requestDto,
+    @PutMapping("/{post_id}")
+    public ResponseEntity update(@RequestBody PostDto.RequestDto requestDto,
                        @PathVariable Long post_id,
                        @AuthenticationPrincipal UserAdapter user) throws IOException{
 
@@ -48,7 +49,7 @@ public class PostRestController {
     }
 
     /** delete **/
-    @DeleteMapping("/post/{post_id}")
+    @DeleteMapping("/{post_id}")
     public ResponseEntity delete(@PathVariable Long post_id){
         postService.delete(post_id);
 
@@ -56,12 +57,12 @@ public class PostRestController {
     }
 
     /** 글 좋아요 **/
-    @PostMapping("/like")
-    public boolean like(Long post_id, @AuthenticationPrincipal UserAdapter user){
+    @PostMapping("/like/{post_id}")
+    public boolean like(@PathVariable Long post_id, @AuthenticationPrincipal UserAdapter user){
 
         Long member_id = user.getMemberDto().getId();
-        // 저장 true, 삭제 false
-        boolean result = postService.saveLike(post_id, member_id);
-        return result;
+
+        // 좋아요하지 않은 게시물이라 좋아요 헀다면 true, 좋아요 한 게시물이라 삭제했다면 false
+        return postService.saveLike(post_id, member_id);
     }
 }

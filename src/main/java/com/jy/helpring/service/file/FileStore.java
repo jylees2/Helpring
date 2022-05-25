@@ -94,7 +94,7 @@ public class FileStore {
         // 서버에 저장하는 파일명
         String uuid = UUID.randomUUID().toString();
 
-        // 확장자명 추출
+        // 확장자를 붙여서 최종적으로 저장할 파일명 정의
         String extension = extractExtension(originalFileName);
         String storeFileName = uuid + "." + extension;
 

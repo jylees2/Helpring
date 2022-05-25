@@ -30,11 +30,9 @@ public class MemberRestController {
      * 사용자 화면에서는 수정 전 정보가 나오는 문제 발생할 수 있음
      */
     private final MemberService memberService;
-    private final MailService mailService;
     private final AuthenticationManager authenticationManager;
 
     /** 회원 정보 수정 **/
-
     @PutMapping("/member")
     public boolean update(@RequestBody MemberDto.RequestDto dto) {
 
@@ -46,6 +44,7 @@ public class MemberRestController {
         } else{
             log.info("사용 가능한 닉네임");
 
+            // 회원 정보 수정
             memberService.userInfoUpdate(dto);
 
             /** ========== 변경된 세션 등록 ========== **/
@@ -60,7 +59,7 @@ public class MemberRestController {
         }
     }
 
-    /** 비밀번호 확인 **/
+    /** 회원 수정 전 비밀번호 확인 **/
     @GetMapping("/checkPwd")
     public boolean checkPassword(@AuthenticationPrincipal UserAdapter user,
                                 @RequestParam String checkPassword,
@@ -68,44 +67,15 @@ public class MemberRestController {
 
         log.info("checkPwd 진입");
         Long member_id = user.getMemberDto().getId();
-        boolean result = memberService.checkPassword(member_id, checkPassword);
-        log.info("결과 : "+result);
-        return result;
+
+        return memberService.checkPassword(member_id, checkPassword);
     }
-
-
-//    @PostMapping("/sendPwd")
-//    public String sendPwdEmail(@RequestParam("memberEmail") String memberEmail) {
-//
-//        log.info("sendPwdEmail 진입");
-//        /* 이메일이 존재하면 true, 존재하지 않으면 false */
-//        boolean check = memberService.checkEmail(memberEmail);
-//        if(check){
-//
-//            /** 임시 비밀번호 생성 **/
-//            String tmpPassword = memberService.getTmpPassword();
-//
-//            /** 임시 비밀번호 저장 **/
-//            memberService.updatePassword(tmpPassword, memberEmail);
-//
-//            /** 메일 생성 & 전송 **/
-//            MailVo mail = mailService.createMail(tmpPassword, memberEmail);
-//            mailService.sendMail(mail);
-//
-//            return "yes";
-//        } else{
-//            // 이메일이 존재하지 않은 경우
-//            return "no";
-//        }
-//    }
-
-
 
     /** 이메일이 DB에 존재하는지 확인 **/
     @GetMapping("/checkEmail")
-    public String checkEmail(@RequestParam("memberEmail") String memberEmail){
+    public boolean checkEmail(@RequestParam("memberEmail") String memberEmail){
+
         log.info("checkEmail 진입");
-        /* 이메일이 존재하면 yes, 존재하지 않으면 no */
         return memberService.checkEmail(memberEmail);
     }
 

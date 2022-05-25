@@ -69,10 +69,16 @@ public class MemberServiceImpl implements MemberService{
     /** 비밀번호 일치 확인 **/
     @Override
     public boolean checkPassword(Long member_id, String checkPassword) {
+
         Member member = memberRepository.findById(member_id).orElseThrow(() ->
                 new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+
+        /* DB에 저장되어있는 암호화된 비밀번호 */
         String realPassword = member.getPassword();
+
+        /* 입력한 비밀번호와 암호화되어 저장되어있는 비밀번호가 일치하는지 확인 */
         boolean matches = encoder.matches(checkPassword, realPassword);
+
         return matches;
     }
 
@@ -80,15 +86,10 @@ public class MemberServiceImpl implements MemberService{
 
     /** 이메일이 존재하는지 확인 **/
     @Override
-    public String checkEmail(String memberEmail) {
+    public boolean checkEmail(String memberEmail) {
+
         /* 이메일이 존재하면 true, 이메일이 없으면 false  */
-        boolean check = memberRepository.existsByEmail(memberEmail);
-
-        String checkEmail = "";
-        if(check) checkEmail = "yes";
-        else checkEmail = "no";
-
-        return checkEmail;
+        return memberRepository.existsByEmail(memberEmail);
     }
 
     /** member_id로 memberDto 반환 **/

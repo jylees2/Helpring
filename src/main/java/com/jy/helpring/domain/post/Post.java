@@ -1,7 +1,7 @@
 package com.jy.helpring.domain.post;
 
 import com.jy.helpring.domain.BaseTimeEntity;
-import com.jy.helpring.domain.category.Category;
+import com.jy.helpring.domain.category.PostCategory;
 import com.jy.helpring.domain.comment.Comment;
 import com.jy.helpring.domain.member.Member;
 import lombok.AllArgsConstructor;
@@ -44,7 +44,7 @@ public class Post extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Category_id")
-    private Category category;
+    private PostCategory category;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comment;
@@ -53,10 +53,9 @@ public class Post extends BaseTimeEntity {
     private List<MemberLikePost> memberLikePost;
 
     /** 내용 수정 업데이트 */
-    public void update(String title, String content, String fileName, Category category){
+    public void update(String title, String content, PostCategory category){
         this.title = title;
         this.content = content;
-        this.fileName = fileName;
         this.category = category;
     }
 

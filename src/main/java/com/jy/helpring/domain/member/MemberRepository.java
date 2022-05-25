@@ -6,9 +6,10 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    /** Security **/
+    /** Security - username이 DB에 존재하는지 확인 **/
     Optional<Member> findByUsername(String username);
 
+    /** 닉네임으로 회원 찾기 **/
     Member findByNickname(String nickname);
 
     /**

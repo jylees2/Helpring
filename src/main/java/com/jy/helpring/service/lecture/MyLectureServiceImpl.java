@@ -34,7 +34,7 @@ public class MyLectureServiceImpl implements MyLectureService{
     private final MyLectureRepository myLectureRepository;
     private final CartRepository cartRepository;
 
-    /** 구매한 강의에 대한 권한 부여 **/
+    /** 구매한 강의에 수강 권한 부여 **/
     @Override
     public void getLecture(Long member_id) {
 
@@ -54,13 +54,13 @@ public class MyLectureServiceImpl implements MyLectureService{
         }
     }
 
-    /** 유저가 구매한 강의 리스트가 존재하는지 확인 **/
+    /** 유저가 구매한 강의 목록이 존재하는지 확인 **/
     @Override
     public boolean checkLecture(Long member_id) {
         return myLectureRepository.existsByMember_Id(member_id);
     }
 
-    /** 유저가 구매한 강의 리스트 반환 **/
+    /** 유저가 구매한 강의 목록 페이징 처리 반환 **/
     @Override
     public Page<MyLectureDto.ResponsePageDto> getAllPageList(Long member_id, Pageable pageable, int pageNo) {
 
@@ -85,6 +85,7 @@ public class MyLectureServiceImpl implements MyLectureService{
         return myLecturePageList;
     }
 
+    /** 페이징 정보 반환 **/
     @Override
     public PageVo getPageInfo(Page<MyLectureDto.ResponsePageDto> myLecturePageList, int pageNo) {
         int totalPage = myLecturePageList.getTotalPages();
@@ -92,6 +93,7 @@ public class MyLectureServiceImpl implements MyLectureService{
 
         // 현재 페이지를 통해 현재 페이지 그룹의 시작 페이지를 구함
         int startNumber = (int)((Math.floor(pageNo/PAGE_MYLECTURE_COUNT)*PAGE_MYLECTURE_COUNT)+1 <= totalPage ? (Math.floor(pageNo/PAGE_MYLECTURE_COUNT)*PAGE_MYLECTURE_COUNT)+1 : totalPage);
+
         // 전체 페이지 수와 현재 페이지 그룹의 시작 페이지를 통해 현재 페이지 그룹의 마지막 페이지를 구함
         int endNumber = (startNumber + PAGE_MYLECTURE_COUNT-1 < totalPage ? startNumber + PAGE_MYLECTURE_COUNT-1 : totalPage);
         boolean hasPrev = myLecturePageList.hasPrevious();

@@ -31,9 +31,7 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    /**
-     * 댓글 수정
-     **/
+    /** 댓글 내용 수정 **/
     public void update(String content) {
         this.content = content;
     }

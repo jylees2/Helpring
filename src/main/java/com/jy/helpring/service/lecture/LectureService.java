@@ -24,7 +24,6 @@ public interface LectureService {
     /** 현재 로그인한 유저가 구매한 강의인지 확인 **/
     boolean myLectureCheck(Long member_id, Long lecture_id);
 
-
     /** ====================== 관리자 권한 ====================== **/
 
     /** 강의 저장 **/

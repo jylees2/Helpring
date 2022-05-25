@@ -11,7 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/lecture")
+@RequestMapping("/rest/lecture/review")
 @RequiredArgsConstructor
 @Slf4j
 public class ReviewRestController {
@@ -20,7 +20,7 @@ public class ReviewRestController {
 
     /** 리뷰 업로드 **/
     /* /lecture/{lecture_id}/review */
-    @PostMapping("/{lecture_id}/review")
+    @PostMapping("/{lecture_id}")
     public ResponseEntity upload(@PathVariable Long lecture_id,
                                  @RequestBody ReviewDto.RequestDto requestDto,
                                  @AuthenticationPrincipal UserAdapter user){
@@ -34,7 +34,7 @@ public class ReviewRestController {
 
     /** 리뷰 삭제 **/
     /* /lecture/{lecture_id}/review/{review_id} */
-    @DeleteMapping("/{lecture_id}/review/{review_id}")
+    @DeleteMapping("/{lecture_id}/{review_id}")
     public ResponseEntity delete(@PathVariable Long review_id){
 
         reviewService.delete(review_id);

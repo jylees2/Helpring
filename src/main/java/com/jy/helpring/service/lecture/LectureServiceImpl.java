@@ -5,6 +5,7 @@ import com.jy.helpring.domain.category.LectureCategoryRepository;
 import com.jy.helpring.domain.file.UploadFile;
 import com.jy.helpring.domain.lecture.Lecture;
 import com.jy.helpring.domain.lecture.LectureRepository;
+import com.jy.helpring.domain.lecture.MyLecture;
 import com.jy.helpring.domain.lecture.MyLectureRepository;
 import com.jy.helpring.service.file.FileStore;
 import com.jy.helpring.web.dto.lecture.LectureDto;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 
 @Service
@@ -44,7 +46,7 @@ public class LectureServiceImpl implements LectureService{
         /* pageable 객체 반환 */
         pageable = PageRequest.of(pageNo, PAGE_LECTURE_COUNT, Sort.by(Sort.Direction.DESC, "id"));
 
-        /* category_name에 해당하는 post 페이지 객체 반환 */
+        /* category_name에 해당하는 lecture 페이지 객체 반환 */
         Page<Lecture> page = lectureRepository.findAll(pageable);
 
         /* Dto로 변환 */
@@ -55,6 +57,7 @@ public class LectureServiceImpl implements LectureService{
                         lecture.getIntro(),
                         lecture.getPrice(),
                         lecture.getFileName(),
+                        lecture.getCategory().getName(),
                         lecture.getCategory().getViewName()
                 )
         );
@@ -80,6 +83,7 @@ public class LectureServiceImpl implements LectureService{
                         lecture.getIntro(),
                         lecture.getPrice(),
                         lecture.getFileName(),
+                        lecture.getCategory().getName(),
                         lecture.getCategory().getViewName()
                 )
         );
@@ -95,6 +99,7 @@ public class LectureServiceImpl implements LectureService{
 
         // 현재 페이지를 통해 현재 페이지 그룹의 시작 페이지를 구함
         int startNumber = (int)((Math.floor(pageNo/PAGE_LECTURE_COUNT)*PAGE_LECTURE_COUNT)+1 <= totalPage ? (Math.floor(pageNo/PAGE_LECTURE_COUNT)*PAGE_LECTURE_COUNT)+1 : totalPage);
+
         // 전체 페이지 수와 현재 페이지 그룹의 시작 페이지를 통해 현재 페이지 그룹의 마지막 페이지를 구함
         int endNumber = (startNumber + PAGE_LECTURE_COUNT-1 < totalPage ? startNumber + PAGE_LECTURE_COUNT-1 : totalPage);
         boolean hasPrev = lecturePageList.hasPrevious();
@@ -117,12 +122,7 @@ public class LectureServiceImpl implements LectureService{
     @Override
     public boolean myLectureCheck(Long member_id, Long lecture_id) {
 
-        /** 로그인 유저가 구매한 강의라면 true, 구매하지 않은 강의라면 false **/
-        if(myLectureRepository.findByMember_IdAndLecture_Id(member_id, lecture_id).isEmpty()){
-            return false;
-        } else {
-            return true;
-        }
+        return myLectureRepository.existsByMember_IdAndLecture_Id(member_id, lecture_id);
     }
 
     /** ====================== 관리자 권한 ====================== **/
@@ -138,7 +138,7 @@ public class LectureServiceImpl implements LectureService{
         /* 파일명 추가 */
         requestDto.addFileName(uploadFile.getStoreFileName());
 
-        /* */
+        /* 카테고리 추가 */
         Long category_id = requestDto.getCategory_id();
         LectureCategory category = lectureCategoryRepository.findById(category_id).orElseThrow(() ->
                 new IllegalArgumentException("해당 카테고리가 존재하지 않습니다."));

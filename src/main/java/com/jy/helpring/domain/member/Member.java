@@ -67,6 +67,15 @@ public class Member extends BaseTimeEntity {
     private List<MyLecture> myLecture;
 
     /** 회원 정보 수정 메서드 **/
+//
+//    public void updateUsername(String username){
+//        this.username = username;
+//    }
+//
+//    public void updateNickname(String nickname){
+//        this.nickname = nickname;
+//    }
+
     public void update(String nickname, String password){
         this.nickname = nickname;
         this.password = password;

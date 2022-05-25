@@ -10,12 +10,13 @@ import java.util.Optional;
 
 public interface MyLectureService {
 
-    /** 구매한 강의에 대한 권한 부여 **/
+    /** 구매한 강의에 수강 권한 부여 **/
     void getLecture(Long member_id);
 
-    /** 유저가 구매한 강의 리스트가 존재하는지 확인 **/
+    /** 유저가 구매한 강의 목록이 존재하는지 확인 **/
     boolean checkLecture(Long member_id);
-    /** 유저가 구매한 강의 리스트 반환 **/
+
+    /** 유저가 구매한 강의 목록 페이징 처리 반환 **/
     Page<MyLectureDto.ResponsePageDto> getAllPageList(Long member_id, Pageable pageable, int pageNo);
 
     /** 페이징 정보 반환 **/

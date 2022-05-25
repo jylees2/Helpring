@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/wish")
+@RequestMapping("/rest/wish")
 @Slf4j
 public class MemberWishLectureRestController {
 
@@ -29,7 +29,7 @@ public class MemberWishLectureRestController {
             memberWishLectureService.deleteById(member_id, lecture_id);
             return true;
         } else {
-            /* 해당 강의를 찜하지 않았다면 */
+            /* 해당 강의를 찜하지 않았다면 찜 목록에 강의 추가 */
             memberWishLectureService.save(member_id, lecture_id);
             return false;
         }
@@ -38,7 +38,10 @@ public class MemberWishLectureRestController {
     /** 위시리스트에서 강의 삭제 **/
     @DeleteMapping("/{wish_id}")
     public ResponseEntity delete(@PathVariable Long wish_id){
+
         memberWishLectureService.deleteWish(wish_id);
+
+        log.info("강의 삭제 완료");
         return new ResponseEntity(HttpStatus.OK);
     }
 }

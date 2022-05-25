@@ -10,16 +10,19 @@ import org.springframework.data.repository.query.Param;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
 
-    /* 카테고리 name 으로 post 찾기 */
+    /** 카테고리 name 으로 post 찾기 **/
     Page<Post> findByCategory_Name(String category_name, Pageable pageable);
 
-    /* 카테고리 name 으로 keyword를 포함하고 있는 post 찾기 */
-    Page<Post> findByCategory_NameContainingIgnoreCase(String category_name, String keyword, Pageable pageable);
+    /** 카테고리 name 으로 keyword를 포함하고 있는 post 찾기 - 카테고리별 키워드 검색 **/
+    Page<Post> findByCategory_NameAndTitleContaining(String category_name, String keyword, Pageable pageable);
 
-    /* 카테고리 name 과 member id로 post 찾기 */
+    /** 카테고리 name 과 member id로 post 찾기 - **/
     Page<Post> findByCategory_NameAndMember_Id(String category_name, Long member_id, Pageable pageable);
 
-    /** 좋아요 **/
+    /** member_id로 post 찾기 - 유저 본인이 작성한 게시물 반환 **/
+    Page<Post> findByMember_Id(Long member_id, Pageable pageable);
+
+    /** 좋아요 추가 **/
     @Modifying
     @Query(value = "update Post post set post.likeCount = post.likeCount + 1 where post.id = :post_id")
     int plusLike(@Param("post_id") Long post_id);

@@ -25,7 +25,7 @@ public class CommentServiceImpl implements CommentService{
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
 
-    /** post_id에 대한 댓글 리스트 조회 **/
+    /** post_id에 대한 댓글 목록 조회 **/
     @Override
     public List<CommentDto.ResponseDto> findAllByPost(Long post_id) {
         Post post = postRepository.findById(post_id).orElseThrow(() ->
@@ -38,7 +38,7 @@ public class CommentServiceImpl implements CommentService{
         return comment.stream().map(CommentDto.ResponseDto::new).collect(Collectors.toList());
     }
 
-    /** 댓글 작성/저장 **/
+    /** 댓글 작성 **/
     @Override
     public Long save(Long post_id, Long member_id, CommentDto.RequestDto requestDto) {
 

@@ -14,15 +14,13 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/post")
+@RequestMapping("/rest/community")
 @Slf4j
 public class CommentRestController {
 
     private final CommentService commentService;
 
-    /**
-     * 댓글 작성
-     **/
+    /** 댓글 작성 **/
     @PostMapping("/{post_id}/comment")
     public ResponseEntity save(@PathVariable Long post_id,
                                @RequestBody CommentDto.RequestDto requestDto,
@@ -30,32 +28,37 @@ public class CommentRestController {
 
         Long member_id = user.getMemberDto().getId();
         commentService.save(post_id, member_id, requestDto);
+
         log.info("댓글 생성 완료");
+
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    /**
-     * 댓글 조회
-     **/
+    /** 댓글 조회 **/
     @GetMapping("/{post_id}/comment")
     public List<CommentDto.ResponseDto> read(@PathVariable Long post_id) {
+
         return commentService.findAllByPost(post_id);
     }
 
-    /**
-     * 댓글 수정
-     **/
+    /** 댓글 수정 **/
     @PutMapping("/{post_id}/comment/{comment_id}")
     public ResponseEntity update(@PathVariable("comment_id") Long comment_id,
                                  @RequestBody CommentDto.RequestDto requestDto) {
+
         commentService.update(comment_id, requestDto);
+
+        log.info("댓글 수정 완료");
         return new ResponseEntity(HttpStatus.OK);
     }
 
     /** 댓글 삭제 **/
     @DeleteMapping("/{post_id}/comment/{comment_id}")
     public ResponseEntity delete(@PathVariable("comment_id") Long comment_id){
+
         commentService.delete(comment_id);
+
+        log.info("댓글 삭제 완료");
         return new ResponseEntity(HttpStatus.OK);
     }
 }

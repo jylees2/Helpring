@@ -29,7 +29,7 @@ public class AdminController {
 
     /** =================== 강의 =================== **/
 
-    /** 강의 저장 폼 반환 **/
+    /** 강의 저장(개설) 작성 폼 반환 **/
     @GetMapping("/lecture/saveForm")
     public String saveLecture(Model model){
 
@@ -47,17 +47,6 @@ public class AdminController {
 
         return "redirect:/lecture/";
     }
-
-//    /** 강의 영상 저장 폼 **/
-//    @GetMapping("/course/saveForm")
-//    public String saveCourse(Model model){
-//
-//        List<LectureCategoryDto.ResponseDto> categoryList = categoryService.findLectureList();
-//
-//        model.addAttribute("categoryList", categoryList);
-//
-//        return "lecture/course-save";
-//    }
 
     /** 강의 영상 저장 **/
     @PostMapping("/course/save")

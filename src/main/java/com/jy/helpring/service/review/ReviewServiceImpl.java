@@ -25,7 +25,7 @@ public class ReviewServiceImpl implements ReviewService{
     private final LectureRepository lectureRepository;
     private final ReviewRepository reviewRepository;
 
-    /** lecture_id 에 대한 리뷰 리스트 조회 **/
+    /** lecture_id 에 대한 리뷰 목록 조회 **/
     @Override
     public List<ReviewDto.ResponseDto> findAllByLecture(Long lecture_id) {
 
@@ -37,14 +37,12 @@ public class ReviewServiceImpl implements ReviewService{
         return reviewList.stream().map(ReviewDto.ResponseDto::new).collect(Collectors.toList());
     }
 
-    /** lecture_id, member_id에 대한 리뷰 리스트가 존재하는지 여부 **/
+    /** lecture_id, member_id에 대한 리뷰 목록이 존재하는지 여부 - 유저가 특정 강의에 리뷰를 작성했는지 확인 **/
     @Override
     public boolean reviewCheck(Long member_id, Long lecture_id) {
-        if(reviewRepository.findByMember_IdAndLecture_Id(member_id, lecture_id) == null){
-            return false;
-        } else {
-            return true;
-        }
+
+        return reviewRepository.existsByMember_IdAndLecture_Id(member_id, lecture_id);
+
     }
 
     /** 리뷰 저장 **/
@@ -70,5 +68,6 @@ public class ReviewServiceImpl implements ReviewService{
                 new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
 
         reviewRepository.delete(review);
+        log.info("리뷰 삭제 완료");
     }
 }
