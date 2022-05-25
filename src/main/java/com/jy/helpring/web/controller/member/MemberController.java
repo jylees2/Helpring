@@ -1,15 +1,20 @@
 package com.jy.helpring.web.controller.member;
 
 import com.jy.helpring.config.auth.UserAdapter;
+import com.jy.helpring.service.lecture.MyLectureService;
 import com.jy.helpring.service.mail.MailService;
 import com.jy.helpring.service.member.MemberService;
 import com.jy.helpring.web.dto.member.MemberDto;
+import com.jy.helpring.web.dto.mylecture.MyLectureDto;
 import com.jy.helpring.web.validator.CheckEmailValidator;
 import com.jy.helpring.web.validator.CheckNicknameValidator;
 import com.jy.helpring.web.validator.CheckUsernameValidator;
 import com.jy.helpring.web.vo.MailVo;
+import com.jy.helpring.web.vo.PageVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +39,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final MailService mailService;
+    private final MyLectureService myLectureService;
 
     /** 중복 체크 유효성 검사 **/
     private final CheckUsernameValidator checkUsernameValidator;
@@ -59,13 +65,17 @@ public class MemberController {
 
     /** 회원가입 과정 **/
     @PostMapping("/auth/joinProc")
-    public String joinProc(@ModelAttribute @Valid MemberDto.RequestDto memberDto, BindingResult bindingResult, Model model) {
+    public String joinProc(@ModelAttribute @Valid MemberDto.RequestDto memberDto,
+                           BindingResult bindingResult,
+                           Model model) {
 
         log.info("회원가입 과정 진입");
+
         /** 검증 **/
 
         /** 회원가입 실패 시 **/
         if (bindingResult.hasErrors()) {
+
             /* 회원 가입 실패 시 입력 데이터 값 유지 */
             log.info("회원 가입 과정에 에러 존재");
             model.addAttribute("memberDto", memberDto);
@@ -78,7 +88,7 @@ public class MemberController {
                 log.info("회원 가입 실패 ! error message : " + error.getDefaultMessage());
             }
 
-            /* Model에 담아 view resolve */
+            /* Model에 error를 담아 view resolve */
             for (String key : errorMap.keySet()) {
                 log.info(key);
                 model.addAttribute(key, errorMap.get(key));
@@ -100,9 +110,10 @@ public class MemberController {
                         @RequestParam(value = "exception", required = false) String exception,
                         Model model) {
 
-        /** 에러와 예외를 모델에 담아 view resolve **/
+        /** 에러와 예외가 존재하는 경우우 모델에 담아 view resolv **/
         model.addAttribute("error", error);
         model.addAttribute("exception", exception);
+
         return "member/member-login";
     }
 
@@ -126,20 +137,16 @@ public class MemberController {
     @GetMapping("/settings/update")
     public String UserInfoModify(@AuthenticationPrincipal UserAdapter user,
                                  Model model) {
+
+        /* 회원 정보 객체 반환 */
         Long member_id = user.getMemberDto().getId();
         MemberDto.ResponseDto responseDto = memberService.getById(member_id);
         model.addAttribute("member", responseDto);
 
-        /* 카테고리 리스트 */
-
-        if (user != null) {
-            model.addAttribute("user", user);
-        }
-        log.info("회원 수정 진입");
         return "member/member-update";
     }
 
-    /** 회원 수정하기 **/
+    /** 회원 수정하기 전 비밀번호 확인 **/
     @GetMapping("/checkPwd")
     public String checkPwdView(){
         return "member/check-pwd";
@@ -158,16 +165,11 @@ public class MemberController {
 
     /** 비밀번호 찾기 - 임시 비밀번호 발급 **/
 
-//    @GetMapping("/auth/sendPwd")
-//    public String sendPwd(){
-//        log.info("sendPwd 진입");
-//        return "member/find-pwd";
-//    }
-
     @PostMapping("/sendPwd")
     public String sendPwdEmail(@RequestParam("memberEmail") String memberEmail) {
 
         log.info("sendPwdEmail 진입");
+        log.info("이메일 : "+ memberEmail);
 
         /** 임시 비밀번호 생성 **/
         String tmpPassword = memberService.getTmpPassword();
@@ -179,8 +181,47 @@ public class MemberController {
         MailVo mail = mailService.createMail(tmpPassword, memberEmail);
         mailService.sendMail(mail);
 
+        log.info("임시 비밀번호 전송 완료");
+
         return "member/member-login";
     }
 
+    /** 내가 수강 중인 강의 조회 **/
+    /* /myLecture */
+    @GetMapping("/myLecture")
+    public String myLecture(@RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+                            Pageable pageable,
+                            @AuthenticationPrincipal UserAdapter user,
+                            Model model){
 
+        Long member_id = user.getMemberDto().getId();
+
+        boolean myLectureCheck = false;
+        if(myLectureService.checkLecture(member_id)){
+            myLectureCheck = true;
+
+            // 구매한 강의가 존재하면 강의 리스트 반환
+
+            /** ========== 페이징 처리 ========== **/
+            pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
+
+            Page<MyLectureDto.ResponsePageDto> myLecturePageList =
+                    myLectureService.getAllPageList(member_id, pageable, pageNo); // 페이지 객체 생성
+
+            // 페이징 정보 반환
+            PageVo pageVo = myLectureService.getPageInfo(myLecturePageList, pageNo);
+
+            model.addAttribute("myLectureList", myLecturePageList);
+            model.addAttribute("pageNo", pageNo);
+            model.addAttribute("pageVo", pageVo);
+        } else {
+            // 구매한 강의가 존재하지 않으면
+            myLectureCheck = false;
+        }
+
+        model.addAttribute("myLectureCheck", myLectureCheck);
+        model.addAttribute("user", user);
+
+        return "lecture/myLecture";
+    }
 }
