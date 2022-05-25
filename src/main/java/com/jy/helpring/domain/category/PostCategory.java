@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Builder
 @Getter
 @Entity
-public class Category {
+public class PostCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,6 +1,5 @@
 package com.jy.helpring.web.dto.category;
 
-import com.jy.helpring.domain.category.Category;
 import com.jy.helpring.domain.category.LectureCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

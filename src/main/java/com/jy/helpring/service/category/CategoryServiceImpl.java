@@ -1,11 +1,8 @@
 package com.jy.helpring.service.category;
 
-import com.jy.helpring.domain.category.Category;
-import com.jy.helpring.domain.category.CategoryRepository;
-import com.jy.helpring.domain.category.LectureCategory;
-import com.jy.helpring.domain.category.LectureCategoryRepository;
-import com.jy.helpring.web.dto.category.CategoryDto;
+import com.jy.helpring.domain.category.*;
 import com.jy.helpring.web.dto.category.LectureCategoryDto;
+import com.jy.helpring.web.dto.category.PostCategoryDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,25 +17,25 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CategoryServiceImpl implements CategoryService{
 
-    private final CategoryRepository categoryRepository;
     private final LectureCategoryRepository lectureCategoryRepository;
+    private final PostCategoryRepository postCategoryRepository;
 
     /** 게시물 카테고리 리스트 반환 **/
     @Override
-    public List<CategoryDto.ResponseDto> findList() {
+    public List<PostCategoryDto.ResponseDto> findPostList() {
 
-        List<Category> categoryList = categoryRepository.findAll();
+        List<PostCategory> categoryList = postCategoryRepository.findAll();
 
-        /* 반환한 Category List 컬렉션 객체를 CategoryDto.ResponseDto List 컬렉션 객체로 변환 */
-        return categoryList.stream().map(CategoryDto.ResponseDto::new).collect(Collectors.toList());
+        /* 반환한 Category List 컬렉션 객체를 PostCategoryDto.ResponseDto List 컬렉션 객체로 변환 */
+        return categoryList.stream().map(PostCategoryDto.ResponseDto::new).collect(Collectors.toList());
 
     }
 
     /** 게시물 카테고리 뷰 이름 반환 **/
     @Override
-    public String getViewName(String name) {
-        Category category = categoryRepository.findByName(name);
-        return category.getViewName();
+    public String getPostViewName(String name) {
+        PostCategory postCategory = postCategoryRepository.findByName(name);
+        return postCategory.getViewName();
     }
 
     /** 강의 카테고리 리스트 반환 **/
@@ -50,6 +47,7 @@ public class CategoryServiceImpl implements CategoryService{
         /* 반환한 Category List 컬렉션 객체를 CategoryDto.ResponseDto List 컬렉션 객체로 변환 */
         return categoryList.stream().map(LectureCategoryDto.ResponseDto::new).collect(Collectors.toList());
     }
+
     /** 강의 카테고리 뷰 이름 반환 **/
     @Override
     public String getLectureViewName(String name) {

@@ -1,12 +1,12 @@
 package com.jy.helpring.web.dto.category;
 
-import com.jy.helpring.domain.category.Category;
+import com.jy.helpring.domain.category.PostCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class CategoryDto {
+public class PostCategoryDto {
 
     @Getter
     @AllArgsConstructor
@@ -20,12 +20,12 @@ public class CategoryDto {
         private String viewName;
 
         /* Dto -> Entity */
-        public Category toEntity(){
-            Category category = Category.builder()
+        public PostCategory toEntity(){
+            PostCategory postCategory = PostCategory.builder()
                     .id(id)
                     .name(name)
                     .build();
-            return category;
+            return postCategory;
         }
     }
 
@@ -40,10 +40,10 @@ public class CategoryDto {
         private String viewName;
 
         /* Entity -> Dto */
-        public ResponseDto(Category category){
-            this.id = category.getId();
-            this.name = category.getName();
-            this.viewName = category.getViewName();
+        public ResponseDto(PostCategory postCategory){
+            this.id = postCategory.getId();
+            this.name = postCategory.getName();
+            this.viewName = postCategory.getViewName();
         }
     }
 }
