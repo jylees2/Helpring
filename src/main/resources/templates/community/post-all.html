@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extra/spring-security">
+<th:block th:replace="/layout/fragment/head :: headFragment"></th:block>
+<head>
+    <meta name="_csrf" th:content="${_csrf?.token}">
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}">
+</head>
+<body>
+<th:block sec:authorize-expr="isAuthenticated()" th:replace="/layout/fragment/modal :: postSaveFragment"></th:block>
+<div id="wrapper">
+    <header class="bg-gradient-dark">
+        <th:block th:replace="/layout/fragment/navbar :: navbarFragment"></th:block>
+        <div class="page-header min-vh-65"
+             style="background-image: url('https://cdn.pixabay.com/photo/2017/08/10/08/47/laptop-2620118_960_720.jpg')">
+            <span class="mask bg-gradient-dark opacity-6"></span>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center mx-auto my-auto">
+                        <h1 class="text-white"><span th:text="${categoryViewName}"></span></h1>
+                        <p class="lead mb-4 text-white opacity-8">개발자의 가장 중요한 역량은 소통!</p>
+                        <div class="card-body text-center">
+                            <div class="btn-group-vertical" th:each="category : ${categoryList}">
+                                <a class="btn btn-info w-auto me-1 mb-0" th:href="@{/community/post/{category_name}(category_name = ${category.name})}"
+                                   th:text="${category.viewName}"></a>
+                            </div>
+                        </div>
+                        <span sec:authorize-expr="isAuthenticated()">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#saveModal">글쓰기</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n3">
+        <form class="row g-3 container text-center" th:action="@{/community/post/search/{category_name}(category_name = ${category_name})}" method="get">
+            <div class="col-auto">
+                <div class="input-group input-group-dynamic mb-4">
+                    <span class="input-group-text"><i class="fas fa-search" aria-hidden="true"></i></span>
+                    <input class="form-control" th:name="keyword" th:value="${keyword}" placeholder="검색어를 입력해주세요." type="text">
+                </div>
+            </div>
+            <div class="col-auto">
+                <input class="btn btn-outline-primary" type="submit" value="검색">
+            </div>
+        </form>
+        <!--페이징 처리 된 게시판 게시글 조회-->
+        <div class="container-fluid">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                        <th scope="col">제목</th>
+                        <th scope="col">작성자</th>
+                        <th scope="col">조회수</th>
+                        <th scope="col">좋아요</th>
+                        <th scope="col">작성날짜</th>
+                        <th scope="col">카테고리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="post: ${postPageList}">
+                        <th scope="row"><a th:href="@{/community/post/read/{category_name}/{post_id}(category_name = ${category_name}, post_id=${post.id})}" th:text="${post.title}"></a></th>
+                        <td th:text="${post.writer}"></td>
+                        <td th:text="${post.viewCount}"></td>
+                        <td th:text="${post.likeCount}"></td>
+                        <td th:text="${post.createdDate}"></td>
+                    <th scope="row" th:text="${post.categoryViewName}"></th>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+        <!-- 페이지 영역 -->
+        <nav th:if="${pageVo.totalPage != 0}">
+            <div class="container">
+                <ul class="pagination pagination-primary m-4">
+
+                    <li class="page-item ">
+                        <!-- 첫 페이지로 이동 -->
+                        <a class="page-link" th:href="@{/community/post/{category_name}(category_name = ${category_name}, page=1)}" aria-level="First">
+                            <span aria-hidden="true"><i class="fa fa-angle-double-left" aria-hidden="true"></i></span>
+                        </a>
+                    </li>
+
+                    <li class="page-item active">
+                        <!-- 이전 페이지 -->
+                        <li th:if="${pageVo.hasPrev} ? 'disabled'">
+                        <a class="page-link" th:href="@{/community/post/{category_name}(category_name = ${category_name}, page=${postPageList.number})}" aria-level="Previous">&lsaquo;</a>
+                        <span aria-hidden="true"><i class="fa fa-angle-left" aria-hidden="true"></i></span>
+                        <li>
+                    </li>
+
+                    <!-- 페이지 번호 -->
+                    <li th:each="page: ${#numbers.sequence(pageVo.startNumber, pageVo.endNumber)}"
+                        th:class="(page == ${pageNo}+1) ? 'page-item active'">
+                        <a class="page-link" th:text="${page}"
+                           th:href="@{/community/post/{category_name}(category_name = ${category_name}, page=${page})}"></a>
+                    </li>
+<!--                                       <li class="page-item active">-->
+<!--                                           <li th:each = "page : ${#numbers.sequence(pageVo.startNumber, pageVo.endNumber)}"-->
+<!--                                                th:if="(${page} == ${pageNo}+1) ? 'active'">-->
+<!--                                                <a class="page-link" th:href="@{/community/post/{category_name}(category_name = ${category_name}, page=${page})}" th:text="${page}"></a>-->
+<!--                                            </li>-->
+<!--                                        </li>-->
+
+                    <li class="page-item">
+                        <!-- 다음 페이지 -->
+                        <li th:if="${pageVo.hasNext} ? 'disabled'">
+                        <a class="page-link" th:href="@{/community/post/{category_name}(category_name = ${category_name}, page=${postPageList.number}+2)}" aria-level="Next">&rsaquo;</a>
+                        <span aria-hidden="true"></span>
+                        </li>
+                    </li>
+
+                    <li class="page-item">
+                        <!-- 마지막 페이지 -->
+                        <a class="page-link" th:href="@{/community/post/{category_name}(category_name = ${category_name}, page=${pageVo.totalPage})}" aria-level="Last">
+                            <span aria-hidden="true"><i class="fa fa-angle-double-right" aria-hidden="true"></i></span>
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        </nav>
+    </div>
+</div>
+</div>
+</body>
+<th:block th:replace="/layout/fragment/script :: scriptFragment"></th:block>
+</html>

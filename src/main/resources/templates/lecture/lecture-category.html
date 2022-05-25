@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extra/spring-security">
+<th:block th:replace="/layout/fragment/head :: headFragment"></th:block>
+<head>
+    <meta name="_csrf" th:content="${_csrf?.token}">
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}">
+</head>
+<body>
+<div id="wrapper">
+    <div id="content-wrapper" class="d-flex flex-column">
+        <header class="bg-gradient-dark">
+            <th:block th:replace="/layout/fragment/navbar :: navbarFragment"></th:block>
+            <div class="page-header min-vh-65"
+                 style="background-image: url('https://cdn.pixabay.com/photo/2017/08/10/08/47/laptop-2620118_960_720.jpg')">
+                <span class="mask bg-gradient-dark opacity-6"></span>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8 text-center mx-auto my-auto">
+                            <h1 class="text-white" th:text="${category_viewName}"></h1>
+                            <p class="lead mb-4 text-white opacity-8">어제보다 오늘 더 많이 알아가요!</p>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="btn-group-vertical" th:each="category : ${categoryList}">
+                                <a class="btn btn-info w-auto me-1 mb-0" th:href="@{|/lecture/${category.name}|}"
+                                   th:text="${category.viewName}"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n3">
+            <div class="row">
+                <div class="col-md-3 mb-5" th:each="lecture:${lectureList}">
+                    <div class="card h-100">
+                        <a th:href="@{/lecture/}+${lecture.categoryName}+@{/}+${lecture.id}">
+                            <div class="card-body">
+                                <span style="font-weight : bold" th:text="${lecture.categoryViewName}"></span>
+                                <p class="card-text text-center">
+                                    <img class="thumbnail rounded"
+                                         th:src="@{/lecture_upload/}+${lecture.fileName}"
+                                         alt="..." width="200" height="150"/></p>
+                                <p class="card-text text-center h6" th:text="${lecture.title}"></p>
+                                <p class="card-text text-center">
+                                    <span th:text="${lecture.intro}"></span>
+                                    <input type="hidden" id="onClassId" th:value="${lecture.id}">
+                                </p>
+                            </div>
+                        </a>
+                        <div class="card-footer text-center">
+                            <span class="card-text" th:text="${lecture.price}"></span>
+                            <span>원</span>
+<!--                            <div>-->
+<!--                                &lt;!&ndash;찜하기&ndash;&gt;-->
+<!--                                <button class="btn bg-gradient-primary btn-icon btn-sm" type="button"-->
+<!--                                        th:onclick="saveWish([[${lecture.id}]])">-->
+<!--                                    <div class="d-flex align-items-center">-->
+<!--                                        <i class="material-icons me-2" aria-hidden="true">favorite</i>-->
+<!--                                        찜 하기-->
+<!--                                    </div>-->
+<!--                                </button>-->
+<!--                                <button type="button" class="btn bg-gradient-primary btn-sm me-2"-->
+<!--                                        th:onclick="saveCart([[${lecture.id}]])">장바구니에 담기-->
+<!--                                </button>-->
+<!--                            </div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="/layout/fragment/footer :: footerFragment"></th:block>
+<!-- 공통 스크립트-->
+</body>
+<th:block th:replace="/layout/fragment/script :: scriptFragment"></th:block>
+<script>
+
+    const header = $("meta[name='_csrf_header']").attr('content');
+    const token = $("meta[name='_csrf']").attr('content');
+
+    /** 장바구니에 저장 **/
+    function saveCart(lectureId) {
+
+        console.log(lectureId);
+        $.ajax({
+            type: 'post',
+            url: '/rest/cart/' + lectureId,
+            contentType: 'application/json; charset=utf-8',
+            beforeSend: function(xhr){
+                xhr.setRequestHeader(header, token);
+            }
+        }).done(function(result){
+            if(result){
+                alert("이미 장바구니에 저장한 강의입니다.");
+            } else {
+                alert("장바구니에 저장되었습니다.");
+                location.reload();
+            }
+        }).fail(function(error){
+            alert(JSON.stringify(error));
+        });
+    };
+
+    /** 위시리스트에 추가 **/
+    function saveWish(lectureId) {
+        $.ajax({
+            url: '/rest/wish/' + lectureId,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            beforeSend: function(xhr){
+                xhr.setRequestHeader(header, token);
+            }
+        }).done(function(result){
+            if(result){
+                alert("위시리스트에서 삭제하였습니다.");
+                location.reload();
+            } else {
+                alert("위시리스트에 저장하였습니다.");
+                location.reload();
+            }
+        }).fail(function(error){
+            alert(JSON.stringify(error));
+        });
+    };
+
+</script>
+</html>

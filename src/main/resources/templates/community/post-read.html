@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extra/spring-security">
+<th:block th:replace="/layout/fragment/head :: headFragment"></th:block>
+<head>
+    <meta name="_csrf" th:content="${_csrf?.token}">
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}">
+</head>
+<body>
+<th:block sec:authorize-expr="isAuthenticated()" th:replace="/layout/fragment/modal :: postSaveFragment"></th:block>
+<div id="wrapper">
+    <header class="bg-gradient-dark">
+        <th:block th:replace="/layout/fragment/navbar :: navbarFragment"></th:block>
+        <div class="page-header min-vh-65"
+             style="background-image: url('https://cdn.pixabay.com/photo/2017/08/10/08/47/laptop-2620118_960_720.jpg')">
+            <span class="mask bg-gradient-dark opacity-6"></span>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center mx-auto my-auto">
+                        <h1 class="text-white"><span id ="categoryViewName" th:value = "${post.categoryViewName}" th:text="${post.categoryViewName}"></span></h1>
+                        <p class="lead mb-4 text-white opacity-8">개발자의 가장 중요한 역량은 소통!</p>
+                        <div class="card-body text-center">
+                            <div class="btn-group-vertical" th:each="category : ${categoryList}">
+                                <a class="btn btn-info w-auto me-1 mb-0" th:href="@{/community/post/{category_name}(category_name = ${category.name})}"
+                                   th:text="${category.viewName}"></a>
+                            </div>
+                        </div>
+                        <span sec:authorize="isAuthenticated()">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#saveModal">글쓰기</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
+        <div style="margin-top: 100px">
+            <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n6 mb-4">
+                <section class="py-sm-7 py-5 position-relative">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 mx-auto">
+                                <a th:href="@{/community/post/{category_name}(category_name = ${category_name})}">게시판 홈으로></a>
+                                <div class="row py-5">
+                                    <div class="col-lg-7 col-md-7 z-index-2 position-relative px-md-2 px-sm-5 mx-auto">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h3 class="mb-0 " th:text="${post.title}"></h3>
+                                            <div sec:authorize-expr="isAuthenticated()" or th:unless="${#strings.equals(post.getMember_id(),login_id)}" class="d-block">
+                                                <!-- 로그인 유저와 작성자가 동일하지 않다면 -->
+                                                <!-- 좋아요 -->
+                                                <input type="hidden" id="like_check" th:value="${like}">
+                                                <img th:id="likeImg" src="/assets/img/like_empty.png" alt="" width="30px"
+                                                     height="30px">
+<!--                                                <img th:unless="${like}" th:name="likeImg" src="/assets/img/like_empty.png" alt="" width="30px"-->
+<!--                                                     height="30px">-->
+                                                <span th:text="${post.likeCount}"></span>
+                                            </div>
+                                            <div sec:authorize-expr="!isAuthenticated()">
+                                                <!-- 로그인하지 않은 유저라면 -->
+                                                <img id="loginCheck" src="/assets/img/like_empty.png" alt="" width="30px"
+                                                     height="30px">
+                                                <span th:text="${post.likeCount}"></span>
+                                            </div>
+                                        </div>
+                                        <!-- 작성자 조회수 추천수 시간-->
+                                        <div class="row mb-4">
+                                            <div class="col-auto">
+                                                <span class="h6" th:text="${post.writer}"></span>
+                                            </div>
+                                            <div class="col-auto">
+                                                <span>조회</span>
+                                                <span class="h6" th:text="${post.viewCount}"></span>
+                                            </div>
+                                            <div class="col-auto">
+                                                <span>추천</span>
+                                                <span class="h6" th:text="${post.likeCount}"></span>
+                                            </div>
+                                            <div class="col-auto">
+                                                <span>작성 날짜</span>
+                                                <span class="h6"
+                                                      th:text="${post.createdDate}"></span>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" id="postId" th:value="${post.id}">
+<!--                                        <input type="hidden" id="memberId" th:value="${member_id}">-->
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <img th:if="${not #strings.isEmpty(post.getFileName())}" th:src="@{/post_upload/}+${post.fileName}"
+                                                     alt="게시물 첨부 이미지" width="500px" height="auto">
+                                            </div>
+                                        </div>
+                                        <span class="text-dark mb-0" th:utext="${post.content}"></span>
+                                        <div sec:authorize-expr="isAuthenticated()" or th:if="${#strings.equals(post.getMember_id(),login_id)}" class="d-block">
+                                            <a th:href="'/community/post/'+${category_name}+'/update/'+${post.id}" role="button" class="btn btn-primary btn-block">수정</a>
+                                            <button type="button" onclick="" id="btn-delete" class="btn btn-info bi">삭제</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 댓글 부분 -->
+
+                        <hr style="solid-color: #D3D3D3">
+                        <div id="comment-write" class="m-2 container">
+                            <div class="row">
+                                <span sec:authorize-expr="isAuthenticated()">
+                                    <input type="hidden" id="commentWriter" th:value="${login_id}">
+                                    <div class="col-md-6">
+                                        <div class="input-group input-group-dynamic">
+                                            <label class="form-label">댓글 작성</label>
+                                            <input type="text" class="form-control" id="commentContent">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="col-auto btn btn-primary" id="comment-write-btn">댓글 등록</button>
+                                    </div>
+                                </span>
+                                <!-- 댓글 리스트 -->
+                                <div id="comment-list" class="m-2 container">
+                                    <div class="container">
+                                        <div class="row" th:each="comment: ${commentList}">
+                                            <div class="col-md-6">
+                                                    <div
+                                                            th:text="${comment.writer} +'  '+${comment.createdDate}"></div>
+                                                    <div class="text-dark" th:text="${comment.content}"></div>
+                                                    <div><input class="btn btn-danger" type="button" sec:authorize-expr="isAuthenticated()" or th:if="${#strings.equals(comment.getMemberId(),login_id)}"
+                                                                id="comment-delete-btn" th:onclick="commentDelete([[${comment.id}]])"
+                                                                value="삭제"></div>
+                                            </div>
+                                            <hr style="solid-color: #D3D3D3; margin-top: 10px;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<th:block th:replace="/layout/fragment/script :: scriptFragment"></th:block>
+<script>
+
+    const header = $("meta[name='_csrf_header']").attr('content');
+    const token = $("meta[name='_csrf']").attr('content');
+    const postId = $('#postId').val();
+
+    /** 게시물 삭제 **/
+
+    $('#btn-delete').click(function(){
+
+        const category_name = $('categoryViewName')
+        const con_check = confirm("정말 삭제하시겠습니까?");
+
+        if(con_check == true){
+            $.ajax({
+                type : 'DELETE',
+                url : '/rest/community/post/'+postId,
+                dataType: 'JSON',
+                contentType: 'application/json; charset=utf-8'
+            }).done(function(){
+                alert("삭제되었습니다.");
+                window.location.href="/community/post/"+category_name;
+            }).fail(function (error) {
+                alert(JSON.stringify(error));
+            });
+        } else{
+            return false;
+        }
+    });
+
+    /** 댓글 작성 **/
+    $("#comment-write-btn").click(function () {
+
+        const data = {
+            content : $("#commentContent").val(),
+            postId : $("#postId").val()
+        }
+
+        if(!data.content || data.content === ""){
+            alert('공백 또는 입력하지 않은 부분이 존재합니다.');
+            return false;
+        } else{
+            const con_check = confirm("댓글을 작성하시겠습니까?");
+            if(con_check){
+                $.ajax({
+                    type: 'post',
+                    url: '/rest/community/' + data.postId + "/comment",
+                    data: JSON.stringify(data),
+                    contentType: 'application/json; charset=utf-8',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader(header, token);
+                    }
+                }).done(function(){
+                    location.reload();
+                }).fail(function(error){
+                    alert(JSON.stringify(error));
+                })
+            }
+        }
+    });
+
+    /** 댓글 삭제 **/
+    function commentDelete(commentId){
+
+        const con_check = confirm("댓글을 삭제하시겠습니까?");
+
+        if(con_check === true){
+            $.ajax({
+                type: 'delete',
+                url: '/rest/community/'+postId+'/comment/'+commentId,
+            }).done(function(){
+                alert('댓글이 삭제되었습니다.');
+                window.location.reload();
+            }).fail(function(error){
+                alert(JSON.stringify(error));
+            });
+        }
+    }
+
+    const clickLikeUrl = "/assets/img/like_click.png";
+    const emptyLikeUrl = "/assets/img/like_empty.png";
+
+    /** 좋아요 유무에 따라 하트 그림 다르게 보여줌 **/
+    //브라우저가 웹 문서를 읽기 시작하고 DOM이 생성되면 실행되는 메소드
+    $(function(){
+
+        // 현재 로그인한 유저가 해당 게시물을 좋아요 했다면 likeVal = true, 좋아요하지 않았다면 false
+        let likeVal = $('#like_check').val(); // 데이터가 있으면 true
+        const likeImg = $('#likeImg');
+
+        console.log("likeVal : " + likeVal);
+
+        if(likeVal === 'true'){
+            // 데이터가 존재하면 화면에 채워진 하트 보여줌
+            $('#likeImg').attr("src", clickLikeUrl);
+        } else if(likeVal === 'false'){
+            // 데이터가 없으면 화면에 빈 하트 보여줌
+            $('#likeImg').attr("src", emptyLikeUrl);
+        }
+    });
+
+    /** 좋아요 클릭 시 실행 **/
+    $('#likeImg').click(function() {
+
+        const postId = $('#postId').val();
+        const likeVal = $('#like_check').val();
+
+        console.log(likeVal);
+        if (likeVal === 'true') {
+            const con_check = confirm("현재 게시물 추천을 취소하시겠습니까?")
+            if (con_check) {
+                console.log("추천 취소 진입");
+                $.ajax({
+                    type: 'POST',
+                    url: '/rest/community/post/like/' + postId,
+                    contentType: 'application/json; charset=utf-8'
+                }).done(function () {
+                    $('#likeImg').attr("src", emptyLikeUrl);
+                    location.reload();
+                }).fail(function (error) {
+                    alert(JSON.stringify(error));
+                })
+            }
+        } else if(likeVal === 'false'){
+            const con_check = confirm("현재 게시물을 추천하시겠습니까?");
+            if (con_check) {
+                console.log("추천 진입");
+                $.ajax({
+                    type: 'POST',
+                    url: '/rest/community/post/like/' + postId,
+                    contentType: 'application/json; charset=utf-8'
+                }).done(function () {
+                    $('#likeImg').attr("src", clickLikeUrl);
+                    location.reload();
+                }).fail(function (error) {
+                    alert(JSON.stringify(error));
+                })
+            }
+        }
+    });
+
+    /** 로그인하지 않은 유저가 좋아요 누를 때 **/
+    $('#loginCheck').click(function(){
+        alert("로그인 후 이용할 수 있습니다.");
+    });
+
+</script>
+</html>

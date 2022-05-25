@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extra/spring-security">
 <th:block th:replace="/layout/fragment/head :: headFragment"></th:block>
 <body>
 <div id="wrapper">
@@ -73,10 +73,9 @@
     </div>
 </div>
 <th:block th:replace="/layout/fragment/footer :: footerFragment"></th:block>
-
+</body>
 <!-- 공통 스크립트-->
 <th:block th:replace="/layout/fragment/script :: scriptFragment"></th:block>
-</body>
 <script>
 
     function save(){

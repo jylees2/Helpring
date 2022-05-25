@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extra/spring-security">
+<th:block th:replace="/layout/fragment/head :: headFragment"></th:block>
+<head>
+    <meta name="_csrf" th:content="${_csrf?.token}">
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}">
+</head>
+<style>
+    #background {
+        background-color: #f48aaa;
+    }
+    .fieldError{
+        color: red;
+        font-size:16px;
+    }
+</style>
+<body>
+<section>
+    <div id="wrapper">
+        <th:block th:replace="/layout/fragment/navbar :: navbarFragment"></th:block>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div class="page-header align-items-start min-vh-100"
+                 style="background-image: url('https://cdn.pixabay.com/photo/2016/11/30/20/44/computer-1873831_960_720.png');"
+                 loading="lazy">
+
+                <span class="mask bg-gradient-dark opacity-6"></span>
+                <div class="container my-auto mt-6">
+                    <div class="row">
+                        <div class="col-7 mx-auto">
+                            <div class="card d-flex justify-content-center shadow-lg my-sm-0 my-sm-6 mt-8 mb-5">
+                                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                                    <div class="bg-gradient-primary shadow-primary border-radius-lg p-3">
+                                        <h3 class="text-white text-primary mb-0">회원가입</h3>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <form action="/auth/joinProc" id="contact-form" method="post" th:object="${memberDto}">
+                                        <input type="hidden" th:name="_csrf" th:value="${_csrf?.token}"/>
+                                        <div class="card-body p-0 my-3">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="input-group input-group-static mb-4">
+                                                        <label th:for="username">아이디</label>
+                                                        <input type="text" th:id="username"  class="form-control"
+                                                               th:field="*{username}" placeholder="아이디를 입력하세요.">
+                                                        <span th:class="fieldError" th:text="${valid_username}"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 ps-md-2">
+                                                    <div class="input-group input-group-static mb-4">
+                                                        <label th:for="nickname">닉네임</label>
+                                                        <input type="text" th:id="nickname"  class="form-control"
+                                                               th:field="*{nickname}" placeholder="닉네임을 입력하세요.">
+                                                        <span th:class="fieldError" th:text="${valid_nickname}"></span>                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="input-group input-group-static mb-4">
+                                                        <label th:for="email">이메일</label>
+                                                        <input type="email" th:id="email" class="form-control"
+                                                               th:field="*{email}" placeholder="hello@naver.com">
+                                                        <span th:class="fieldError" th:text="${valid_email}"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="input-group input-group-static mb-4">
+                                                        <label th:for="password">비밀번호</label>
+                                                        <input type="password" th:id="password" class="form-control"
+                                                               th:field="*{password}" placeholder="비밀번호를 입력하세요.">
+                                                        <span th:class="fieldError" th:text="${valid_password}"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 ps-md-2">
+                                                    <div class="input-group input-group-static mb-4">
+                                                        <label th:for="chkPassword">비밀번호 확인</label>
+                                                        <input class="form-control" type="password" th:id="chkPassword"
+                                                               placeholder="비밀번호" onblur="checkPassword()">
+                                                        <span id="passwordResult"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <button type = "submit" class="btn bg-gradient-primary mt-3 mb-0">회원가입</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+<th:block th:replace="/layout/fragment/script :: scriptFragment"></th:block>
+<script>
+    const header = $("meta[name='_csrf_header']").attr('content');
+    const token = $("meta[name='_csrf']").attr('content');
+
+    /** 비밀번호 확인 **/
+    function checkPassword(){
+        const password = $('#chkPassword').val();
+        const chkPassword = $('#password').val();
+        const passwordResult = document.querySelector('#passwordResult');
+
+        if(password == chkPassword){
+            if(password == ""){
+                passwordResult.style.color = 'red';
+                passwordResult.innerHTML = '비밀번호를 입력해주세요.'
+            } else {
+                passwordResult.style.color = 'green';
+                passwordResult.innerHTML = '비밀번호가 일치합니다.'
+            }
+        } else {
+            passwordResult.style.color = 'red';
+            passwordResult.innerHTML = '비밀번호가 일치하지 않습니다.'
+        }
+    }
+</script>
+</html>

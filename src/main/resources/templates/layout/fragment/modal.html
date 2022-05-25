@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extra/spring-security">
+
+<!-- 로그인 모달 -->
+<th:block th:fragment="loginModalFragment">
+    <div id="myModal" class="modal fade">
+        <div class="modal-dialog modal-dialog-centered modal-login">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form action="/auth/loginProc" method="post">
+                        <input type="hidden" th:name="_csrf" th:value="${_csrf.token}"/>
+                        <div class="container my-auto">
+                            <div class="row">
+
+                                <div class="card z-index-0 fadeIn3 fadeInBottom">
+                                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                                        <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+                                            <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">로그인</h4>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <form role="form" class="text-start">
+                                            <div class="input-group input-group-outline my-3">
+                                                <label class="form-label">아이디</label>
+                                                <input type="text" name="username" class="form-control" required>
+                                            </div>
+                                            <div class="input-group input-group-outline mb-3">
+                                                <label class="form-label">비밀번호</label>
+                                                <input type="password" name="memberPassword" class="form-control"
+                                                       required>
+                                            </div>
+                                            <div th:if="error">
+                                                <p id="valid" style="color: red; font-size:12px;"><a th:text="${exception}"></a></p>
+                                            </div>
+                                            <!--                                            <div class="form-check form-switch d-flex align-items-center mb-3">-->
+                                            <!--                                                <input class="form-check-input" type="checkbox" id="rememberMe">-->
+                                            <!--                                                <label class="form-check-label mb-0 ms-2" for="rememberMe">Remember-->
+                                            <!--                                                    me</label>-->
+                                            <!--                                            </div>-->
+                                            <div class="text-center">
+                                                <input type="submit" class="btn bg-gradient-primary w-100 my-4 mb-2"
+                                                       value="로그인">
+                                            </div>
+                                            <div class="text-center">
+                                                <a class="p-2"
+                                                   href="https://kauth.kakao.com/oauth/authorize?client_id=198b13b4aad42557177244425bb771f9&redirect_uri=http://localhost:8091/member/kakaologin&response_type=code">
+                                                    <img src="/assets/img/kakao.png">
+                                                </a>
+                                            </div>
+                                            <p class="mt-4 text-sm text-center">
+                                                회원이 아니신가요?
+                                                <a href="/auth/join"
+                                                   class="text-primary text-gradient font-weight-bold">회원가입 하러 가기!</a>
+                                            </p>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <p class="mt-4 text-sm text-center">
+                        <button type="button" class="btn btn-link" data-bs-toggle="modal"
+                                data-bs-target="#findPassword">비밀번호를 잊으셨나요?</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<!--임시 비밀번호 모달-->
+<th:block th:fragment="findPasswordFragment">
+    <!-- 비밀번호 찾기 모달 -->
+    <div id="findPw" class="modal fade">
+        <div class="modal-dialog modal-dialog-centered modal-login">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="container my-auto">
+                        <div class="row">
+                            <div class="card z-index-0 fadeIn3 fadeInBottom">
+                                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                                    <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+                                        <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">비밀번호 찾기</h4>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <!--                                    <form role="form" class="text-start" action="/sendPwd" method="post" name="sendEmail">-->
+                                    <div class="text-start">
+<!--                                        <input type="hidden" th:name="_csrf" th:value="${_csrf?.token}"/>-->
+                                        <p>입력한 이메일로 임시 비밀번호가 전송됩니다.</p>
+                                        <div class="input-group input-group-outline my-3">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" id="memberEmail" name="memberEmail" class="form-control" required>
+                                        </div>
+                                        <div class="text-center">
+                                            <button type="button" class="btn bg-gradient-primary w-100 my-4 mb-2"
+                                                    id="checkEmail">비밀번호 발송</button>
+                                        </div>
+                                    </div>
+                                    <!--                                    </form>-->
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<!-- 글 업로드 모달 -->
+<th:block th:fragment="postSaveFragment">
+    <div class="modal fade" id="saveModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="staticBackdropLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <label class="modal-title" id="staticBackdropLabel">게시글 작성</label>
+                </div>
+                <div class="modal-body">
+                    <form action="/community/post/save" method="post" name="saveForm" onsubmit="return save()"
+                          enctype="multipart/form-data" th:object="${postDto}">
+                        <input type="hidden" th:name="_csrf" th:value="${_csrf.token}"/>
+                        <div class="container my-auto">
+                            <div class="row">
+                                <div class="card z-index-0 fadeIn3 fadeInBottom">
+                                    <div class="card-body">
+                                        <div>
+                                        <span th:each="category: ${categoryList}">
+                                            <input type="radio" class="btn-check" th:value="${category.id}"
+                                                   th:name="category_id" th:id="${category.name}" autocomplete="off" checked
+                                                   required>
+                                            <label class="btn btn-outline-primary" th:for="${category.name}"
+                                                    th:text="${category.viewName}"></label>
+                                        </span>
+                                        </div>
+
+                                        <div>
+                                            <div style = "font-weight: bold" >작성자</div>  <p sec:authentication="principal.memberDto.nickname"></p>
+                                        </div>
+                                        <div class="input-group input-group-outline my-3">
+                                            <label class="form-label">제목</label>
+                                            <input type="text" th:class="form-control" th:name="title" th:id = "title">
+                                        </div>
+                                        <div class="input-group mb-4 input-group-static">
+                                            <textarea type="text" th:class="form-control"
+                                                      th:name="content" th:id = "content" rows="10" placeholder="내용을 입력하세요."></textarea>
+                                        </div>
+                                        <div>
+                                            <label for="postFile">업로드 사진 선택</label>
+                                            <input th:class="file-selector-button" type="file" id="postFile"
+                                                   th:name="file">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-container modal-footer">
+                            <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal"
+                                    aria-label="Close">
+                                작성취소
+                            </button>
+                            <input type="submit" class="btn bg-gradient-primary" value="글쓰기">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        function save(){
+            const data = {
+                title : $('#title').val(),
+                content: $('#content').val()
+            };
+
+            const confirmCheck = confirm("작성하시겠습니까?");
+            if(confirmCheck === true){
+
+                /* 공백과 빈 문자열 체크 */
+                if(!data.title || data.title.trim() === "" || !data.content || data.content.trim() === "" ){
+                    alert("공백 또는 입력하지 않은 부분이 있습니다.");
+                    return false;
+                } else{
+                    return true;
+                }
+            }
+            return false;
+        }
+    </script>
+</th:block>

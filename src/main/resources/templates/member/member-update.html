@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extra/spring-security">
+<style>
+    #background {
+        background-color: #f48aaa;
+    }
+</style>
+<th:block th:replace="/layout/fragment/head :: headFragment"></th:block>
+<body>
+<div id="wrapper">
+    <header class="bg-gradient-dark">
+        <th:block th:replace="/layout/fragment/navbar :: navbarFragment"></th:block>
+        <div class="page-header min-vh-50" id="background">
+            <span class="mask bg-gradient-dark opacity-6"></span>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center mx-auto my-auto">
+                        <h1 class="text-white">마이 페이지</h1>
+                        <span sec:authorize="isAuthenticated()"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
+        <section class="py-7">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="row justify-content-start">
+                            <form style="margin: auto" th:object="${member}">
+                                <input type="hidden" th:name="_csrf" th:value="${_csrf.token}"/>
+                                <input type="hidden" th:id="userId" th:value="*{id}">
+                                <h3>아이디</h3>
+                                <div class="input-group input-group-static mb-4">
+                                    <label style="font-weight: bold" th:for="username">아이디</label>
+                                    <input type="text" th:field="*{username}" th:value="*{username}" class="form-control"
+                                           th:id="username" readonly>
+                                </div>
+                                <h3>이메일</h3>
+                                <div class="input-group input-group-static mb-4">
+                                    <label style="font-weight: bold" th:for="email">아이디</label>
+                                    <input type="text" th:field="*{email}" th:value="*{email}" class="form-control"
+                                           th:id="email" readonly>
+                                </div>
+                                <h3>닉네임 변경</h3>
+                                <div class="input-group input-group-static mb-4">
+                                    <label style="font-weight: bold" th:for="username">기존 닉네임</label>
+                                    <input type="text" th:field="*{nickname}" th:value="*{nickname}" class="form-control"
+                                           th:id="nickname" readonly>
+                                </div>
+                                <div class="input-group input-group-static mb-4">
+                                    <label style="font-weight: bold" th:for="nickname">변경할 닉네임 입력</label>
+                                    <input type="text" th:id="newNickname" th:name="newNickname"
+                                           placeholder="변경할 닉네임을 입력하세요." class="form-control" >
+                                </div>
+                                <h3>비밀번호 변경</h3>
+                                <div class="input-group input-group-static mb-4">
+                                    <label style="font-weight: bold" th:for="password">변경할 비밀번호 입력</label>
+                                    <input type="password" th:id="password" th:name="password"
+                                           placeholder="변경할 비밀번호를 입력하세요." class="form-control" >
+                                </div>
+                            </form>
+                            <button id="memberUpdate" class="btn bg-gradient-primary" value="회원 정보 수정"
+                                    th:onclick="memberUpdate()">회원 정보 수정</button>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-4 ms-auto mt-lg-0 mt-4">
+                        <div class="card">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                                <div class="card-body text-center">
+                                    <h3 class="font-weight-normal">
+                                        <a>내 정보 수정</a>
+                                    </h3>
+                                    <hr/>
+                                </div>
+                                <th:block th:replace="/layout/fragment/sideBar :: mypageSideBarFragment"></th:block>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<th:block th:replace="/layout/fragment/footer :: footerFragment"></th:block>
+</body>
+<th:block th:replace="/layout/fragment/script :: scriptFragment"></th:block>
+<script>
+    function memberUpdate(){
+        const data = {
+            id: $('#userId').val(),
+            username: $('#username').val(),
+            nickname: $('#newNickname').val(),
+            password: $('#password').val()
+        };
+
+        // 공백 및 빈 문자열 체크
+        if(!data.nickname || data.nickname.trim() === "" || !data.password || data.password.trim() === ""){
+            alert("공백 또는 입력하지 않은 부분이 있습니다.");
+            return false;
+        }
+        // 유효성 검사
+        else if(!/^[가-힣a-zA-Z0-9]{2,10}$/.test(data.nickname)){
+            alert("닉네임은 특수문자를 포함하지 않은 2~10자리여야 합니다.");
+            $('#newNickname').focus();
+            return false;
+        }
+        else if(!/(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\W)(?=\S+$).{8,16}/.test(data.password)){
+            alert("비밀번호는 8~16자리수여야 합니다. 영문 대소문자, 숫자, 특수문자를 1개 이상 포함해야 합니다.");
+            $('#password').focus();
+            return false;
+        }
+
+        const confirmCheck = confirm("수정하시겠습니까?");
+
+        if(confirmCheck == true){
+            $.ajax({
+                type: 'PUT',
+                url: '/rest/member',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(data)
+            }).done(function(result){
+                if(result){
+                    alert("회원 수정이 완료되었습니다.");
+                    window.location.href="/myPage";
+                } else{
+                    alert("이미 사용 중인 닉네임입니다. 다시 입력해주세요.");
+                    $('#newNickname').focus();
+                }
+            }).fail(function(error){
+                alert(JSON.stringify(error));
+            });
+        }
+    }
+</script>

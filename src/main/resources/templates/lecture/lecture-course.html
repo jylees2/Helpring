@@ -18,7 +18,7 @@
                 <div class="col-lg-6">
 
                     <div class="ratio ratio-16x9">
-                        <iframe th:src="@{/course_upload/}+${course.fileName}" allowfullscreen></iframe>
+                        <video controls th:src="@{|/course_upload/${course.fileName}|}" allowfullscreen></video>
                     </div>
 
                     <div class="card card-body mt-3 mx-2">
@@ -49,5 +49,7 @@
         </div>
     </div>
 </div>
+<th:block th:replace="/layout/fragment/footer :: footerFragment"></th:block>
 </body>
+<th:block th:replace="/layout/fragment/script :: scriptFragment"></th:block>
 </html>

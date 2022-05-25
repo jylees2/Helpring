@@ -75,13 +75,8 @@
             <div class="col-lg-4">
                 <div class="card card-body blur shadow-blur mx-1 mx-md-1 mt-n3">
                     <div class="h4">총계 : &#8361;<span th:text="*{totalPrice}" th:value="*{totalPrice}"></span></div>
-<!--                    <div class="h6">포인트 사용 :<input class="form-control" type="number" min="0" th:max="*{memberPoint}"-->
-<!--                                                   id="point_use_value" name="pointUse" onblur="point_use()" value="0">-->
-<!--                        <span th:text="*{'보유 포인트 : '+memberPoint +'point'}"></span>-->
-<!--                    </div>-->
-<!--                    <span class="h6" id="pointApply"></span>-->
+
                     <div class="h3"> 결제금액 : <span id="applyPrice" th:text="*{totalPrice}"></span></div>
-<!--                    <input type="hidden" id="point_value" value="0">-->
                     <input type="hidden" id="totalPrice" th:value="*{totalPrice}">
                     <input type="hidden" id="applyValue" th:value="*{totalPrice}">
                     <button type="button" class="btn btn-success" onclick="requestPay()" value="수강권 구매">장바구니 결제</button>
@@ -90,7 +85,9 @@
         </div>
     </div>
 </div>
-
+<th:block th:replace="/layout/fragment/footer :: footerFragment"></th:block>
+</body>
+<th:block th:replace="/layout/fragment/script :: scriptFragment"></th:block>
 <script>
 
     const header = $("meta[name='_csrf_header']").attr('content');
@@ -167,3 +164,4 @@
         });
     };
 </script>
+</html>

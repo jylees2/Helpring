@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extra/spring-security">
+
+<!-- 공통 헤더-->
+<th:block th:replace="/layout/fragment/head :: headFragment"></th:block>
+
+<body class="index-page bg-gray-200">
+
+<!-- 채널톡 플러그인 -->
+<!-- Channel Plugin Scripts -->
+<script>
+    (function() {
+        var w = window;
+        if (w.ChannelIO) {
+            return (window.console.error || window.console.log || function(){})('ChannelIO script included twice.');
+        }
+        var ch = function() {
+            ch.c(arguments);
+        };
+        ch.q = [];
+        ch.c = function(args) {
+            ch.q.push(args);
+        };
+        w.ChannelIO = ch;
+        function l() {
+            if (w.ChannelIOInitialized) {
+                return;
+            }
+            w.ChannelIOInitialized = true;
+            var s = document.createElement('script');
+            s.type = 'text/javascript';
+            s.async = true;
+            s.src = 'https://cdn.channel.io/plugin/ch-plugin-web.js';
+            s.charset = 'UTF-8';
+            var x = document.getElementsByTagName('script')[0];
+            x.parentNode.insertBefore(s, x);
+        }
+        if (document.readyState === 'complete') {
+            l();
+        } else if (window.attachEvent) {
+            window.attachEvent('onload', l);
+        } else {
+            window.addEventListener('DOMContentLoaded', l, false);
+            window.addEventListener('load', l, false);
+        }
+    })();
+    ChannelIO('boot', {
+        "pluginKey": "a4b5e5d2-ce93-4296-9e75-37de3cb1d7fd"
+    });
+</script>
+<!-- End Channel Plugin -->
+<div id="wrapper">
+    <div id="content-wrapper" class="d-flex flex-column">
+        <header class="bg-gradient-dark">
+            <th:block th:replace="/layout/fragment/navbar :: navbarFragment"></th:block>
+            <div class="page-header min-vh-65"
+                 style="background-image: url('https://cdn.pixabay.com/photo/2017/08/01/20/52/people-2567915_960_720.jpg')">
+                <span class="mask bg-gradient-dark opacity-6"></span>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8 text-center mx-auto my-auto">
+                            <h1 class="text-white">Helpring</h1>
+                            <p class="lead mb-4 text-white opacity-8">성장하는 웹 개발자를 위한 커뮤니티</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- 본문-->
+        <div class="card card-body blur shadow-blur mx-3 mx-md-3 mt-n2">
+            <section class="my-2 py-2">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-4 ms-auto me-auto p-lg-4 mt-lg-1">
+                            <div class="rotating-card-container">
+                                <div class="card card-rotate card-background card-background-mask-primary shadow-primary mt-md-0 mt-2">
+                                    <div class="front front-background">
+                                        <div class="card-body py-7 text-center">
+                                            <i class="material-icons text-white text-4xl my-3">touch_app</i>
+                                            <h3 class="text-white"> Help Spring! </h3>
+                                            <p class="text-white opacity-8"> 혼자 개발하면서 울고 계시나요? </p>
+                                        </div>
+                                    </div>
+                                    <div sec:authroize="!isAuthenticated()" class="back back-background">
+                                        <div class="card-body pt-7 text-center">
+                                            <h3 class="text-white">Helpring!</h3>
+                                            <p class="text-white opacity-8"> 함께하는 개발의 즐거움을 느껴보세요 </p>
+                                            <a href="/auth/join"
+                                               class="btn btn-white btn-sm w-50 mx-auto mt-3">Join with Helpring!</a>
+                                        </div>
+                                    </div>
+                                    <div sec:authroize="isAuthenticated()" class="back back-background">
+                                        <div class="card-body pt-7 text-center">
+                                            <h3 class="text-white">Helpring!</h3>
+                                            <p class="text-white opacity-8"> 오늘 공부할 강의를 살펴보세요! </p>
+                                            <a href="/myLecture"
+                                               class="btn btn-white btn-sm w-50 mx-auto mt-3">Coding with Helpring!</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 ms-auto">
+                            <a href="/lecture/">
+                                <div class="row justify-content-start mt-1">
+                                    <div id="carouselExampleIndicators" class="carousel carousel-dark slide" data-bs-ride="carousel">
+                                        <div class="carousel-indicators">
+                                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                                        </div>
+                                        <div class="carousel-inner">
+                                            <div class="carousel-item active" data-bs-interval="10000">
+                                                <img src="/assets/img/java.png" style="width:610px; height:400px;"alt="자바 이미지">
+                                            </div>
+                                            <div class="carousel-item" data-bs-interval="2000">
+                                                <img src="/assets/img/vuejs.jpg" style="width:610px; height:400px;"alt="뷰js 이미지">
+                                            </div>
+                                            <div class="carousel-item">
+                                                <img src="/assets/img/spring.png" style="width:610px; height:400px;" alt="스프링 이미지">
+                                            </div>
+                                        </div>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <!-- 공통 하단-->
+        <th:block th:replace="/layout/fragment/footer :: footerFragment"></th:block>
+    </div>
+</div>
+
+<!-- 공통 스크립트-->
+<th:block th:replace="/layout/fragment/script :: scriptFragment"></th:block>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extra/spring-security">
+<style>
+    #background {
+        background-color: #f48aaa;
+    }
+</style>
+<th:block th:replace="/layout/fragment/head :: headFragment"></th:block>
+<body>
+<div id="wrapper">
+    <header class="bg-gradient-dark">
+        <th:block th:replace="/layout/fragment/navbar :: navbarFragment"></th:block>
+        <div class="page-header min-vh-50" id="background">
+            <span class="mask bg-gradient-dark opacity-6"></span>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center mx-auto my-auto">
+                        <h1 class="text-white">마이 페이지</h1>
+                        <span sec:authorize="isAuthenticated()"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
+        <section class="py-7">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="row justify-content-start">
+                            <form style="margin: auto" th:object="${member}">
+                                <h5>닉네임</h5>
+                                <div class="input-group input-group-static mb-4">
+                                    <input type="text" th:field="*{nickname}" th:value="*{nickname}" class="form-control"
+                                           th:id="nickname" readonly>
+                                </div>
+                                <h5>아이디</h5>
+                                <div class="input-group input-group-static mb-4">
+                                    <input type="text" th:field="*{username}" th:value="*{username}" class="form-control"
+                                           th:id="username" readonly>
+                                </div>
+                                <h5>이메일</h5>
+                                <div class="input-group input-group-static mb-4">
+                                    <input type="text" th:field="*{email}" th:value="*{email}" class="form-control"
+                                           th:id="email" readonly>
+                                </div>
+                                <a type="button" href="/checkPwd" class="btn bg-gradient-primary">회원 수정하기</a>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 ms-auto mt-lg-0 mt-4">
+                        <div class="card">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                                <div class="card-body text-center">
+                                    <h3 class="font-weight-normal">
+                                        <a>내 정보</a>
+                                    </h3>
+                                    <hr/>
+                                </div>
+                                <th:block th:replace="/layout/fragment/sideBar :: mypageSideBarFragment"></th:block>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<th:block th:replace="/layout/fragment/footer :: footerFragment"></th:block>
+</body>
+<th:block th:replace="/layout/fragment/script :: scriptFragment"></th:block>
+

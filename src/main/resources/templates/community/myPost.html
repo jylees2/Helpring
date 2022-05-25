@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extra/spring-security">
+<style>
+    #background {
+        background-color: #f48aaa;
+    }
+</style>
+<th:block th:replace="/layout/fragment/head :: headFragment"></th:block>
+<body>
+<div id="wrapper">
+    <header class="bg-gradient-dark">
+        <th:block th:replace="/layout/fragment/navbar :: navbarFragment"></th:block>
+        <div class="page-header min-vh-50" id="background">
+            <span class="mask bg-gradient-dark opacity-6"></span>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center mx-auto my-auto">
+                        <h1 class="text-white">마이 페이지</h1>
+                        <span sec:authorize="isAuthenticated()"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
+        <section class="py-7">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="row justify-content-start">
+                        <table class="table table-hover caption-top">
+                            <thead>
+                            <tr>
+                                <th scope="col">제목</th>
+                                <th scope="col">조회수</th>
+                                <th scope="col">좋아요</th>
+                                <th scope="col">작성시간</th>
+                                <th scope="col">카테고리</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr scope="col" th:each="post: ${postPageList}">
+                                <th scope="row"><a th:href="@{/community/post/read/{category_name}/{post_id}(category_name = ${post.categoryName}, post_id=${post.id})}" th:text="${post.title}"></a></th>
+                                <td th:text="${post.viewCount}"></td>
+                                <td th:text="${post.likeCount}"></td>
+                                <td><span th:text="${post.createdDate}"></span></td>
+                                <td th:text="${post.categoryViewName}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 ms-auto mt-lg-0 mt-4">
+                        <div class="card">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                                <div class="card-body text-center">
+                                    <h3 class="font-weight-normal">
+                                        <a>내가 쓴 글</a>
+                                    </h3>
+                                    <hr/>
+                                </div>
+                                <th:block th:replace="/layout/fragment/sideBar :: mypageSideBarFragment"></th:block>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<th:block th:replace="/layout/fragment/footer :: footerFragment"></th:block>
+</body>
+<th:block th:replace="/layout/fragment/script :: scriptFragment"></th:block>
+<script>
+
+</script>
+</html>

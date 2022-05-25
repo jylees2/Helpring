@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extra/spring-security">
+<th:block th:replace="/layout/fragment/head :: headFragment"></th:block>
+<head>
+    <meta name="_csrf" th:content="${_csrf?.token}">
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}">
+</head>
+<body>
+<div id="wrapper">
+    <div id="content-wrapper" class="d-flex flex-column">
+        <header class="bg-gradient-dark">
+            <th:block th:replace="/layout/fragment/navbar :: navbarFragment"></th:block>
+            <div class="page-header min-vh-65"
+                 style="background-image: url('https://cdn.pixabay.com/photo/2017/08/10/08/47/laptop-2620118_960_720.jpg')">
+                <span class="mask bg-gradient-dark opacity-6"></span>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8 text-center mx-auto my-auto">
+                            <h1 class="text-white">내 강의</h1>
+                            <p class="lead mb-4 text-white opacity-8">오늘도 열심히 공부하세요!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="row">
+                <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n3">
+                    <div th:unless="${myLectureCheck}" class="row">
+                        <a th:href="@{/lecture/}" class="h3">아직 구매한 강의가 없어요. 강의를 구매하여 수강해보세요!</a>
+                    </div>
+
+                    <div th:if="${myLectureCheck}" class="row">
+                        <div class="col-md-3 mb-5" th:each="myLecture:${myLectureList}">
+                            <div class="card h-100">
+                                <a th:href="@{|/lecture/${myLecture.categoryName}/${myLecture.lectureId}|}">
+                                    <div class="card-body">
+                                        <p class="card-text text-center">
+                                            <img class="img-fluid rounded mb-4 mb-lg-0"
+                                                 th:src="@{|/lecture_upload/${myLecture.fileName}|}"
+                                                 alt="..." width="150" height="100"/></p>
+                                        <p class="card-text text-center h6" th:text="${myLecture.lectureTitle}"></p>
+                                        <p class="card-text text-center">
+                                            <span th:text="${myLecture.categoryViewName}"></span>
+                                            /<span th:text="${myLecture.lectureIntro}"></span>
+                                            <input type="hidden" id="myLectureId" th:value="${myLecture.lectureId}">
+<!--                                            <input type="hidden" id="memberId" th:value="${session.loginId}">-->
+                                        </p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="/layout/fragment/footer :: footerFragment"></th:block>
+</body>
+<th:block th:replace="/layout/fragment/script :: scriptFragment"></th:block>
+</html>
