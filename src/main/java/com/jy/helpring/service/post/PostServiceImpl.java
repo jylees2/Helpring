@@ -1,7 +1,7 @@
 package com.jy.helpring.service.post;
 
-import com.jy.helpring.domain.category.Category;
-import com.jy.helpring.domain.category.CategoryRepository;
+import com.jy.helpring.domain.category.PostCategory;
+import com.jy.helpring.domain.category.PostCategoryRepository;
 import com.jy.helpring.domain.file.UploadFile;
 import com.jy.helpring.domain.member.Member;
 import com.jy.helpring.domain.member.MemberRepository;
@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,14 +30,16 @@ public class PostServiceImpl implements PostService{
     private static final int PAGE_POST_COUNT = 10; // 한 화면에 보일 컨텐츠 수
 
     private final PostRepository postRepository;
+    private final PostCategoryRepository postCategoryRepository;
     private final MemberRepository memberRepository;
-    private final CategoryRepository categoryRepository;
     private final MemberLikePostRepository memberLikePostRepository;
 
     /** 파일 저장 처리 객체 **/
     private final FileStore fileStore;
 
-    /* 게시물 전체 리스트 페이징 */
+    /** ========================= 게시물 페이징 ========================= **/
+
+    /** 게시물 리스트 페이징 **/
     @Override
     public Page<PostDto.ResponsePageDto> getPageList(Pageable pageable, int pageNo, String category_name, String orderCriteria) {
 
@@ -57,7 +58,9 @@ public class PostServiceImpl implements PostService{
                         post.getViewCount(),
                         post.getLikeCount(),
                         post.getCreatedDate(),
-                        post.getCategory().getName())
+                        post.getCategory().getViewName(),
+                        post.getCategory().getName()
+                )
         );
 
         return postPageList;
@@ -72,7 +75,7 @@ public class PostServiceImpl implements PostService{
         pageable = PageRequest.of(pageNo, PAGE_POST_COUNT, Sort.by(Sort.Direction.DESC, orderCriteria));
 
         /* category_name에 해당하면서 keyword를 포함하는 post 페이지 객체 반환 */
-        Page<Post> page = postRepository.findByCategory_NameContainingIgnoreCase(category_name, keyword, pageable);
+        Page<Post> page = postRepository.findByCategory_NameAndTitleContaining(category_name, keyword, pageable);
 
         /* Dto로 변환 */
         Page<PostDto.ResponsePageDto> postPageList = page.map(
@@ -84,6 +87,7 @@ public class PostServiceImpl implements PostService{
                         post.getViewCount(),
                         post.getLikeCount(),
                         post.getCreatedDate(),
+                        post.getCategory().getViewName(),
                         post.getCategory().getName()
                 )
         );
@@ -92,22 +96,7 @@ public class PostServiceImpl implements PostService{
 
     }
 
-    /** 페이징 정보 반환 **/
-    @Override
-    public PageVo getPageInfo(Page<PostDto.ResponsePageDto> postPageList, int pageNo) {
-        int totalPage = postPageList.getTotalPages();
-
-        // 현재 페이지를 통해 현재 페이지 그룹의 시작 페이지를 구함
-        int startNumber = (int)((Math.floor(pageNo/PAGE_POST_COUNT)*PAGE_POST_COUNT)+1 <= totalPage ? (Math.floor(pageNo/PAGE_POST_COUNT)*PAGE_POST_COUNT)+1 : totalPage);
-        // 전체 페이지 수와 현재 페이지 그룹의 시작 페이지를 통해 현재 페이지 그룹의 마지막 페이지를 구함
-        int endNumber = (startNumber + PAGE_POST_COUNT-1 < totalPage ? startNumber + PAGE_POST_COUNT-1 : totalPage);
-        boolean hasPrev = postPageList.hasPrevious();
-        boolean hasNext = postPageList.hasNext();
-
-        return new PageVo(totalPage, startNumber, endNumber, hasPrev, hasNext);
-    }
-
-    /* post_id 로 Post 객체를 찾아 PostDto.ResponseDto로 반환 */
+    /** post_id 에 해당하는 게시물 반환 (조회) **/
     @Override
     public PostDto.ResponseDto getById(Long post_id) {
         Post post = postRepository.findById(post_id).orElseThrow(() ->
@@ -116,14 +105,14 @@ public class PostServiceImpl implements PostService{
         return new PostDto.ResponseDto(post);
     }
 
-    /** member_id 에 해당하는 게시물 리스트 페이징 **/
+    /** member_id 에 해당하는 게시물 리스트 페이징 - 내가 쓴 글 **/
     @Override
-    public Page<PostDto.ResponsePageDto> getMyPostPageList(Pageable pageable, int pageNo, Long member_id, String category_name) {
+    public Page<PostDto.ResponsePageDto> getMyPostPageList(Pageable pageable, int pageNo, Long member_id) {
+
         /* 넘겨받은 orderCriteria 를 이용해 내림차순하여 Pageable 객체 반환 */
         pageable = PageRequest.of(pageNo, PAGE_POST_COUNT, Sort.by(Sort.Direction.DESC, "id"));
 
-        /* category_name에 해당하면서 member_id에 해당하는 post 페이지 객체 반환 */
-        Page<Post> page = postRepository.findByCategory_NameAndMember_Id(category_name, member_id, pageable);
+        Page<Post> page = postRepository.findByMember_Id(member_id, pageable);
 
         /* Dto로 변환 */
         Page<PostDto.ResponsePageDto> postPageList = page.map(
@@ -135,11 +124,29 @@ public class PostServiceImpl implements PostService{
                         post.getViewCount(),
                         post.getLikeCount(),
                         post.getCreatedDate(),
+                        post.getCategory().getViewName(),
                         post.getCategory().getName()
                 )
         );
 
         return postPageList;
+    }
+
+
+    /** 페이징 정보 반환 **/
+    @Override
+    public PageVo getPageInfo(Page<PostDto.ResponsePageDto> postPageList, int pageNo) {
+        int totalPage = postPageList.getTotalPages();
+
+        // 현재 페이지를 통해 현재 페이지 그룹의 시작 페이지를 구함
+        int startNumber = (int)((Math.floor(pageNo/PAGE_POST_COUNT)*PAGE_POST_COUNT)+1 <= totalPage ? (Math.floor(pageNo/PAGE_POST_COUNT)*PAGE_POST_COUNT)+1 : totalPage);
+
+        // 전체 페이지 수와 현재 페이지 그룹의 시작 페이지를 통해 현재 페이지 그룹의 마지막 페이지를 구함
+        int endNumber = (startNumber + PAGE_POST_COUNT-1 < totalPage ? startNumber + PAGE_POST_COUNT-1 : totalPage);
+        boolean hasPrev = postPageList.hasPrevious();
+        boolean hasNext = postPageList.hasNext();
+
+        return new PageVo(totalPage, startNumber, endNumber, hasPrev, hasNext);
     }
 
     /** ================ 게시물 CRUD ================ **/
@@ -148,23 +155,25 @@ public class PostServiceImpl implements PostService{
     @Override
     public Long save(PostDto.RequestDto requestDto, Long member_id) throws IOException {
 
-        /* 파일 저장 */
-        MultipartFile post_file = requestDto.getFile();
-        UploadFile uploadFile = fileStore.storeFile(post_file);
+        // 파일이 존재한다면
+        if(!requestDto.getFile().isEmpty()){
 
-        /* 파일명 추가 */
-        requestDto.addFileName(uploadFile.getStoreFileName());
+            /* 파일 저장 */
+            MultipartFile post_file = requestDto.getFile();
+            UploadFile uploadFile = fileStore.storeFile(post_file);
+
+            /* 파일명 추가 */
+            requestDto.addFileName(uploadFile.getStoreFileName());
+        }
 
         /* Member 정보, category 정보 추가 */
         Long category_id = requestDto.getCategory_id();
 
         Member member = memberRepository.findById(member_id).orElseThrow(() ->
-                                            new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
-        Category category = categoryRepository.findById(category_id).orElseThrow(() ->
+                                            new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+        PostCategory category = postCategoryRepository.findById(category_id).orElseThrow(() ->
                                             new IllegalArgumentException("해당 카테고리가 존재하지 않습니다."));
 
-//        requestDto.setMember(member);
-//        requestDto.setCategory(category);
 
         /* RequestDto -> Entity */
         Post post = requestDto.toEntity(member, category);
@@ -175,15 +184,15 @@ public class PostServiceImpl implements PostService{
     @Override
     public void update(PostDto.RequestDto requestDto, Long member_id, Long post_id) {
 
-        Long category_id = requestDto.getCategory_id();
+        String category_name = requestDto.getCategory_name();
 
         Post post = postRepository.findById(post_id).orElseThrow(() ->
                 new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
 
-        Category category = categoryRepository.findById(category_id).orElseThrow(() ->
-                                                       new IllegalArgumentException("해당 카테고리가 존재하지 않습니다."));
+        PostCategory category = postCategoryRepository.findByName(category_name);
+
         /* 수정 메서드 호출 */
-        post.update(requestDto.getTitle(), requestDto.getContent(), requestDto.getFileName(), category);
+        post.update(requestDto.getTitle(), requestDto.getContent(), category);
     }
 
     /** delete **/
@@ -193,6 +202,8 @@ public class PostServiceImpl implements PostService{
                 new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
         postRepository.delete(post);
     }
+
+    /** ========================= 게시물 좋아요 및 조회수 처리 ========================= **/
 
     /** 글 좋아요 **/
     @Override
@@ -223,23 +234,26 @@ public class PostServiceImpl implements PostService{
         }
     }
 
-    /** 글에 좋아요 했는지 확인하는 메서드 **/
+    /** 글 좋아요 확인 **/
     @Override
     public boolean findLike(Long post_id, Long member_id) {
 
-        /* 좋아요 한 게시물이 아니라면 false, 좋아요 한 게시물이라면 true */
-        Optional<MemberLikePost> memberLikePost = memberLikePostRepository.findByPost_IdAndMember_Id(post_id, member_id);
+        return memberLikePostRepository.existsByPost_IdAndMember_Id(post_id, member_id);
 
-        if(memberLikePost.isEmpty()){
-            return false;
-        } else {
-            return true;
-        }
     }
 
     /** 글 조회수 업데이트 **/
     @Override
     public void updateView(Long post_id) {
         postRepository.updateView(post_id);
+    }
+
+
+    /** 카테고리 명(parameter로 사용할 영문명) 반환 **/
+    public String getCategoryName(Long post_id){
+        Post post = postRepository.findById(post_id).orElseThrow(()
+                -> new IllegalArgumentException("해당 게시글이 없습니다."));
+
+        return post.getCategory().getName();
     }
 }
