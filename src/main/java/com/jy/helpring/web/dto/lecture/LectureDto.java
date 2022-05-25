@@ -1,6 +1,5 @@
 package com.jy.helpring.web.dto.lecture;
 
-import com.jy.helpring.domain.category.Category;
 import com.jy.helpring.domain.category.LectureCategory;
 import com.jy.helpring.domain.lecture.Lecture;
 import com.jy.helpring.web.dto.review.ReviewDto;
@@ -79,6 +78,7 @@ public class LectureDto {
 
             this.review = lecture.getReview().stream().map(ReviewDto.ResponseDto::new).collect(Collectors.toList());
             this.categoryName = lecture.getCategory().getName();
+            this.categoryViewName = lecture.getCategory().getViewName();
         }
     }
 
@@ -92,6 +92,8 @@ public class LectureDto {
         private String intro;
         private int price;
         private String fileName;
+
+        private String categoryName;
         private String categoryViewName;
 
         /** Entity -> Dto **/
@@ -101,6 +103,7 @@ public class LectureDto {
             this.intro = lecture.getIntro();
             this.price = lecture.getPrice();
             this.fileName = lecture.getFileName();
+            this.categoryName = lecture.getCategory().getName();
             this.categoryViewName = lecture.getCategory().getViewName();
         }
     }

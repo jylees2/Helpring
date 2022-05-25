@@ -1,13 +1,11 @@
 package com.jy.helpring.web.dto.post;
 
-import com.jy.helpring.domain.category.Category;
+//import com.jy.helpring.domain.category.Category;
+import com.jy.helpring.domain.category.PostCategory;
 import com.jy.helpring.domain.member.Member;
 import com.jy.helpring.domain.post.Post;
 import com.jy.helpring.web.dto.comment.CommentDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -23,6 +21,7 @@ public class PostDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
+    @Setter
     public static class RequestDto{
         private Long id;
         private String title;
@@ -36,8 +35,10 @@ public class PostDto {
 
         private Long member_id;
         private Long category_id;
+
+        private String category_name;
         /* Dto -> Entity */
-        public Post toEntity(Member member, Category category){
+        public Post toEntity(Member member, PostCategory category){
             Post post = Post.builder()
                     .id(id)
                     .title(title)
@@ -84,7 +85,7 @@ public class PostDto {
         private String createdDate, updatedDate;
         private List<CommentDto.ResponseDto> comment;
 
-        private String categoryName;
+        private String categoryViewName;
 
         /* Entity -> Dto */
         public ResponseDto(Post post){
@@ -100,7 +101,7 @@ public class PostDto {
             this.updatedDate = post.getUpdatedDate();
             this.comment = post.getComment().stream().map(CommentDto.ResponseDto::new).collect(Collectors.toList());
 
-            this.categoryName = post.getCategory().getName();
+            this.categoryViewName = post.getCategory().getViewName();
         }
     }
 
@@ -117,6 +118,7 @@ public class PostDto {
         private int likeCount;
         private String createdDate;
 
+        private String categoryViewName;
         private String categoryName;
 
         /* Entity -> Dto */
@@ -129,6 +131,7 @@ public class PostDto {
             this.likeCount = post.getLikeCount();
             this.createdDate = post.getCreatedDate();
 
+            this.categoryViewName = post.getCategory().getViewName();
             this.categoryName = post.getCategory().getName();
         }
     }

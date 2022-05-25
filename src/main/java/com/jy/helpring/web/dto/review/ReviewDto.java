@@ -42,6 +42,8 @@ public class ReviewDto {
     public static class ResponseDto{
 
         private Long id;
+
+        private Long member_id;
         private int rate;
         private String content;
         private String createdDate, updatedDate;
@@ -51,6 +53,7 @@ public class ReviewDto {
         /** Entity -> Dto **/
         public ResponseDto(Review review){
             this.id = review.getId();
+            this.member_id = review.getMember().getId();
             this.rate = review.getRate();
             this.content = review.getContent();
             this.createdDate = review.getCreatedDate();

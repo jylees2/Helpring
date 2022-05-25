@@ -45,16 +45,19 @@ public class MemberWishLectureDto {
         private String lecture_title;
         private int lecture_price;
         private String lecture_fileName;
+        private String category_name;
+
 
         /** Entity -> Dto **/
         public ResponseDto(MemberWishLecture memberWishLecture){
             this.id = memberWishLecture.getId();
             this.member_id = memberWishLecture.getId();
-            this.lecture_id = memberWishLecture.getId();
+            this.lecture_id = memberWishLecture.getLecture().getId();
 
             this.lecture_title = memberWishLecture.getLecture().getTitle();
             this.lecture_price = memberWishLecture.getLecture().getPrice();
             this.lecture_fileName = memberWishLecture.getLecture().getFileName();
+            this.category_name = memberWishLecture.getLecture().getCategory().getName();
         }
     }
 }
