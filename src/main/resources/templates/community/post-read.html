@@ -141,7 +141,7 @@
 </div>
 </body>
 <th:block th:replace="/layout/fragment/script :: scriptFragment"></th:block>
-<script>
+<script th:inline="javascript">
 
     const header = $("meta[name='_csrf_header']").attr('content');
     const token = $("meta[name='_csrf']").attr('content');
@@ -150,18 +150,17 @@
     /** 게시물 삭제 **/
 
     $('#btn-delete').click(function(){
-
-        const category_name = $('categoryViewName')
+        const category_name = [[${category_name}]];
         const con_check = confirm("정말 삭제하시겠습니까?");
 
         if(con_check == true){
             $.ajax({
                 type : 'DELETE',
                 url : '/rest/community/post/'+postId,
-                dataType: 'JSON',
                 contentType: 'application/json; charset=utf-8'
             }).done(function(){
                 alert("삭제되었습니다.");
+                console.log("카테고리 명"+category_name);
                 window.location.href="/community/post/"+category_name;
             }).fail(function (error) {
                 alert(JSON.stringify(error));

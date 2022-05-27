@@ -44,6 +44,11 @@
                 <input class="btn btn-outline-primary" type="submit" value="검색">
             </div>
         </form>
+        <div class="col-auto">
+             <a class="btn btn-primary" th:href="@{/community/post/search/{category_name}(category_name=${category_name}, keyword=${keyword}, orderby=viewCount)}">조회수 순</a>
+             <a class="btn btn-primary" th:href="@{/community/post/search/{category_name}(category_name=${category_name}, keyword=${keyword}, orderby=likeCount)}">좋아요 순</a>
+             <a class="btn btn-primary" th:href="@{/community/post/search/{category_name}(category_name=${category_name}, keyword=${keyword}, orderby=id)}">최신 순</a>
+        </div>
         <!--페이징 처리 된 게시판 게시글 조회-->
         <div class="container-fluid">
             <table class="table table-hover">
