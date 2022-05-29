@@ -67,7 +67,6 @@
                             <textarea type="text" class="form-control" th:id="content"
                                       th:name="content" rows="10">[[${post.content}]]</textarea>
                         </div>
-                        <div class="row">
 <!--                            <div class="col-md-3">-->
 <!--                                <label for="file">업로드 사진 선택</label>-->
 <!--                            </div>-->
@@ -75,6 +74,7 @@
 <!--                                <input class="form-control" type="file" id="file"-->
 <!--                                       name="file">-->
 <!--                            </div>-->
+			        	<div class="col-auto">
                             <a th:href="'/community/post/read/'+${category_name}+'/'+${post_id}" role="button" class="btn btn-primary btn-block">취소</a>
                             <button type="submit" id="btn-update" class="btn btn btn-info bi">수정 완료</button>
                         </div>

@@ -64,8 +64,8 @@ public class PostController {
             model.addAttribute("user", user);
         }
 
-        /* 기본적으로 보여줄 게시판 리스트는 `자유 게시판` 카테고리의 게시물들을 최신순으로 보여준다. */
-        if(category_name.isEmpty()) category_name = "chat"; // 자유게시판
+//        /* 기본적으로 보여줄 게시판 리스트는 `자유 게시판` 카테고리의 게시물들을 최신순으로 보여준다. */
+//        if(category_name.isEmpty()) category_name = "chat"; // 자유게시판
 
         /* 뷰에서 보여줄 카테고리명 & 영문명 반환 */
         String viewName = categoryService.getPostViewName(category_name);

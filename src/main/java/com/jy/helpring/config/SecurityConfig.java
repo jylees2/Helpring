@@ -71,7 +71,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/", "/index", "/lecture/**", "/community/post/**", "/auth/**",
-                        "/sendPwd/**", "/rest/checkEmail/**","/rest/sendPwd/**").permitAll()
+                        "/sendPwd/**", "/rest/checkEmail/**","/rest/sendPwd/**",
+                        "/v2/**", "/configuration/**", "/swagger*/**", "/webjars/**").permitAll()
                 .antMatchers("/admin/**").access("hasRole('ADMIN')")
                 .anyRequest().authenticated()
                 .and()
