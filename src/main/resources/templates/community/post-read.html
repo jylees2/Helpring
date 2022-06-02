@@ -89,11 +89,11 @@
                                                      alt="게시물 첨부 이미지" width="500px" height="auto">
                                             </div>
                                         </div>
-                                        <span class="text-dark mb-0" th:utext="${post.content}"></span>
-                                        <div sec:authorize-expr="isAuthenticated()" or th:if="${#strings.equals(post.getMember_id(),login_id)}" class="d-block">
-                                            <a th:href="'/community/post/'+${category_name}+'/update/'+${post.id}" role="button" class="btn btn-primary btn-block">수정</a>
-                                            <button type="button" onclick="" id="btn-delete" class="btn btn-info bi">삭제</button>
-                                        </div>
+	                                        <div style="white-space:pre;" class="text-dark mb-0" th:utext="${post.content}" readonly="readonly"></div>
+	                                        <div sec:authorize-expr="isAuthenticated()" or th:if="${#strings.equals(post.getMember_id(),login_id)}" class="d-block">
+	                                            <a th:href="'/community/post/'+${category_name}+'/update/'+${post.id}" role="button" class="btn btn-primary btn-block">수정</a>
+	                                            <button type="button" onclick="" id="btn-delete" class="btn btn-info bi">삭제</button>
+	                                        </div>
                                     </div>
                                 </div>
                             </div>
