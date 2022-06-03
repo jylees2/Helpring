@@ -99,6 +99,10 @@ public class MyLectureServiceImpl implements MyLectureService{
         boolean hasPrev = myLecturePageList.hasPrevious();
         boolean hasNext = myLecturePageList.hasNext();
 
-        return new PageVo(totalPage, startNumber, endNumber, hasPrev, hasNext);
-    }
+		/* 화면에는 원래 페이지 인덱스+1 로 출력됨을 주의 */		
+        int prevIndex = myLecturePageList.previousOrFirstPageable().getPageNumber()+1;
+        int nextIndex = myLecturePageList.nextOrLastPageable().getPageNumber()+1;
+
+        return new PageVo(totalPage, startNumber, endNumber, hasPrev, hasNext, prevIndex, nextIndex);    
+        }
 }

@@ -75,46 +75,51 @@
             </table>
         </div>
     </div>
-    <!-- 페이지 영역 -->
-    <nav th:if="${postPageList.totalPages != 0}">
-        <div class="container">
-            <ul class="pagination pagination-primary m-4">
-                <li class="page-item ">
-                    <!-- 첫 페이지로 이동 -->
-                    <a class="page-link" th:href="@{/community/post/search/{category_name}(category_name = ${category_name}, keyword = ${keyword}, page=1)}" aria-level="First">
-                        <span aria-hidden="true"><i class="fa fa-angle-double-left" aria-hidden="true"></i></span>
-                    </a>
-                </li>
+        <!-- 페이지 영역 -->
+        <nav th:if="${pageVo.totalPage != 0}">
+            <div class="container">
+                <ul class="pagination pagination-primary m-4">
 
-                <li class="page-item active">
-                    <!-- 이전 페이지 -->
-                <li th:if="${postPageList.hasPrevious} ? 'disabled'">
-                <a class="page-link" th:href="@{/community/post/search/{category_name}(category_name = ${category_name}, keyword = ${keyword}, page=${postPageList.number})}" aria-level="Previous">&lsaquo;</a>
-                <span aria-hidden="true"><i class="fa fa-angle-left" aria-hidden="true"></i></span>
-                <li>
-            </li>
-                <!-- 페이지 번호 -->
-                <li th:each="page: ${#numbers.sequence(startPage, endPage)}"
-                    th:class="(page == ${pageNo}+1) ? 'page-item active'">
-                    <a class="page-link" th:text="${page}"
-                       th:href="@{/community/post/search/{category_name}(category_name = ${category_name}, keyword = ${keyword}, page=${page})}"></a>
-                </li>
-                <li class="page-item">
-                    <!-- 다음 페이지 -->
-                <li th:if="${postPageList.hasNext} ? 'disabled'">
-                <a class="page-link" th:href="@{/community/post/search/{category_name}(category_name = ${category_name}, keyword = ${keyword}, page=${postPageList.number}+2)}" aria-level="Next">&rsaquo;</a>
-                <span aria-hidden="true"></span>
-            </li>
-                </li>
-                <li class="page-item">
-                    <!-- 마지막 페이지 -->
-                    <a class="page-link" th:href="@{/community/post/search/{category_name}(category_name = ${category_name}, keyword = ${keyword}, page=${postPageList.totalPages})}" aria-level="Last">
-                        <span aria-hidden="true"><i class="fa fa-angle-double-right" aria-hidden="true"></i></span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+                    <li class="page-item ">
+                        <!-- 첫 페이지로 이동 -->
+                        <a class="page-link" th:href="@{/community/post/{category_name}(category_name = ${category_name}, page=1)}" aria-level="First">
+                            <span aria-hidden="true"><i class="fa fa-angle-double-left" aria-hidden="true"></i></span>
+                        </a>
+                    </li>
+
+                    <li class="page-item active">
+                        <!-- 이전 페이지 -->
+                        <li th:if="${pageVo.hasPrev} ? 'disabled'">
+                        <a class="page-link" th:href="@{/community/post/{category_name}(category_name = ${category_name}, page=${pageVo.prevIndex})}" aria-level="Previous">&lsaquo;</a>
+                        <span aria-hidden="true"></span>
+                        <li>
+                    </li>
+
+                    <!-- 페이지 번호 -->
+                    <li th:each="page: ${#numbers.sequence(pageVo.startNumber, pageVo.endNumber)}"
+                        th:class="(page == ${pageNo}+1) ? 'page-item active'">
+                        <a class="page-link" th:text="${page}"
+                           th:href="@{/community/post/{category_name}(category_name = ${category_name}, page=${page})}"></a>
+                    </li>
+
+                    <li class="page-item">
+                        <!-- 다음 페이지 -->
+                        <li th:if="${pageVo.hasNext} ? 'disabled'">
+                        <a class="page-link" th:href="@{/community/post/{category_name}(category_name = ${category_name}, page=${pageVo.nextIndex})}" aria-level="Next">&rsaquo;</a>
+                        <span aria-hidden="true"></span>
+                        </li>
+                    </li>
+
+                    <li class="page-item">
+                        <!-- 마지막 페이지 -->
+                        <a class="page-link" th:href="@{/community/post/{category_name}(category_name = ${category_name}, page=${pageVo.totalPage})}" aria-level="Last">
+                            <span aria-hidden="true"><i class="fa fa-angle-double-right" aria-hidden="true"></i></span>
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        </nav>
 </div>
 <th:block th:replace="/layout/fragment/footer :: footerFragment"></th:block>
 </body>

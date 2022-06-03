@@ -90,10 +90,7 @@ public class PostController {
 
         model.addAttribute("postPageList", postPageList);
         model.addAttribute("pageNo", pageNo);
-//        model.addAttribute("pageVo", pageVo);
-        
-        model.addAttribute("startPage", pageVo.startNumber);
-        model.addAttribute("endPage", pageVo.endNumber);
+        model.addAttribute("pageVo", pageVo);
 
         return "community/post-all";
     }
@@ -217,11 +214,8 @@ public class PostController {
         /* 페이징 관련 정보 & 키워드 반환 */
         model.addAttribute("postPageList", postResponsePageDto);
         model.addAttribute("pageNo", pageNo);
-//        model.addAttribute("pageVo", pageVo);
-        
-        
-        model.addAttribute("startPage", pageVo.startNumber);
-        model.addAttribute("endPage", pageVo.endNumber);
+        model.addAttribute("pageVo", pageVo);
+
         model.addAttribute("keyword", keyword);
 
         return "community/post-search";
@@ -257,10 +251,7 @@ public class PostController {
         /* 페이징 관련 정보 & 키워드 반환 */
         model.addAttribute("postPageList", postResponsePageDto);
         model.addAttribute("pageNo", pageNo);
-//        model.addAttribute("pageVo", pageVo);
-        
-        model.addAttribute("startPage", pageVo.startNumber);
-        model.addAttribute("endPage", pageVo.endNumber);
+        model.addAttribute("pageVo", pageVo);
 
         return "community/myPost";
     }

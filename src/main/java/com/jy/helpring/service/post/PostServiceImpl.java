@@ -145,8 +145,12 @@ public class PostServiceImpl implements PostService{
         int endNumber = (startNumber + PAGE_POST_COUNT-1 < totalPage ? startNumber + PAGE_POST_COUNT-1 : totalPage);
         boolean hasPrev = postPageList.hasPrevious();
         boolean hasNext = postPageList.hasNext();
+        
+		/* 화면에는 원래 페이지 인덱스+1 로 출력됨을 주의 */		
+        int prevIndex = postPageList.previousOrFirstPageable().getPageNumber()+1;
+        int nextIndex = postPageList.nextOrLastPageable().getPageNumber()+1;
 
-        return new PageVo(totalPage, startNumber, endNumber, hasPrev, hasNext);
+        return new PageVo(totalPage, startNumber, endNumber, hasPrev, hasNext, prevIndex, nextIndex);
     }
 
     /** ================ 게시물 CRUD ================ **/
