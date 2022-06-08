@@ -1,6 +1,7 @@
 package com.jy.helpring.web.controller.lecture;
 
 import com.jy.helpring.config.auth.UserAdapter;
+import com.jy.helpring.domain.Role;
 import com.jy.helpring.service.cart.CartService;
 import com.jy.helpring.service.category.CategoryService;
 import com.jy.helpring.service.course.CourseService;
@@ -109,11 +110,19 @@ public class LectureController {
         boolean reviewCheck;
 
         if(user != null){
+        	            
             // 로그인한 사용자라면
-            Long member_id = user.getMemberDto().getId();
+        	
+        	Long member_id = user.getMemberDto().getId();
             model.addAttribute("member_id", member_id);
 
-            lectureCheck = lectureService.myLectureCheck(member_id, lecture_id);
+            // 관리자라면 무조건 lectureCheck = true
+        	if(user.getMemberDto().getRole() == Role.ADMIN) {
+        		lectureCheck = true;
+        	} else {
+        		lectureCheck = lectureService.myLectureCheck(member_id, lecture_id);
+        	}
+
             reviewCheck = reviewService.reviewCheck(member_id, lecture_id);
 
         } else {

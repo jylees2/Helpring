@@ -144,7 +144,7 @@
                                                     height="45px">
                                         </li>
                                    </a>
-                                    <!-- 강의를 구매한 상태라면   -->
+                                    <!-- 강의를 구매한 상태라면 or 관리자가 접속 중이라면   -->
                                      <a th:if="${lectureCheck}" th:href="@{|/lecture/course/${course.id}|}">
                                         <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
                                             <div class="ms-2 me-auto">
@@ -183,10 +183,13 @@
                         </span>
 
                     </div>
-                    <div class="card card-body blur shadow-blur mx-1 mx-md-1 mt-n3" th:if="${lectureCheck}">
+                    <div sec:authorize="hasRole('USER') or hasRole('SOCIAL')" class="card card-body blur shadow-blur mx-1 mx-md-1 mt-n3" th:if="${lectureCheck}">
                         <span class="text-dark">오늘도 공부한 당신!</span>
                         <span class="h4 text-dark">멋진 개발자에 한 걸음 더 :) </span>
                     </div>
+                    <span sec:authorize="hasRole('ADMIN')" class="card card-body blur shadow-blur mx-1 mx-md-1 mt-n3">
+                    	<span class="h4 text-dark">관리자 페이지입니다. :) </span>
+                    </span>
                 </div>
             </div>
         </div>
