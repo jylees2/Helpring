@@ -42,7 +42,7 @@
                                                     <div class="input-group input-group-static mb-4">
                                                         <label th:for="username">아이디</label>
                                                         <input type="text" th:id="username"  class="form-control"
-                                                               th:field="*{username}" placeholder="아이디를 입력하세요.">
+                                                               th:field="*{username}" placeholder="영어 소문자와 숫자만 사용하여 4~20자리">
                                                         <span th:class="fieldError" th:text="${valid_username}"></span>
                                                     </div>
                                                 </div>
@@ -50,7 +50,7 @@
                                                     <div class="input-group input-group-static mb-4">
                                                         <label th:for="nickname">닉네임</label>
                                                         <input type="text" th:id="nickname"  class="form-control"
-                                                               th:field="*{nickname}" placeholder="닉네임을 입력하세요.">
+                                                               th:field="*{nickname}" placeholder="특수문자를 포함하지 않은 2~10자리">
                                                         <span th:class="fieldError" th:text="${valid_nickname}"></span>                                                    </div>
                                                 </div>
                                             </div>
@@ -69,7 +69,7 @@
                                                     <div class="input-group input-group-static mb-4">
                                                         <label th:for="password">비밀번호</label>
                                                         <input type="password" th:id="password" class="form-control"
-                                                               th:field="*{password}" placeholder="비밀번호를 입력하세요.">
+                                                               th:field="*{password}" style = "font-size:9pt" placeholder="영문 대소문자, 숫자, 특수문자를 1개 이상 포함한 8~16자리">
                                                         <span th:class="fieldError" th:text="${valid_password}"></span>
                                                     </div>
                                                 </div>
