@@ -62,14 +62,14 @@ spring:
       client:
         registration:
           google:
-            client-id: 
-            client-secret: 
+            client-id: 423276194391-i8nbbv34mk4r2m7f8agovrfg919cl6nq.apps.googleusercontent.com
+            client-secret: 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
             scope:
               - profile
               - email
           naver:
-            client-id: 
-            client-secret: 
+            client-id: h9fZGPt1x7vdYsqrqAwG
+            client-secret: XDffhlKckJ
             scope:
               - name
               - email
