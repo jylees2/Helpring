@@ -79,7 +79,7 @@ _더 이상 혼자 울지 마세요,,💦_
 > 몇 가지 내용은 이전 프로젝트([CRUD + Security](https://github.com/jylees2/NewSecurityBoard))에서 공부한 것을 토대로 구현했기 때문에 이전 프로젝트 게시물을 링크했다.
 
 - 이전 프로젝트 글
-  - 스프링 시큐리티 회원가입
+  - [스프링 시큐리티 회원가입](https://velog.io/@jyleedev/%ED%9A%8C%EC%9B%90-%ED%9A%8C%EC%9B%90%EA%B0%80%EC%9E%85)
   - 스프링 시큐리티 로그인
   - [스프링 데이터 JPA 이용 조회수 처리](https://velog.io/@jyleedev/%EA%B2%8C%EC%8B%9C%EA%B8%80-%EC%A1%B0%ED%9A%8C%EC%88%98-%EC%B2%98%EB%A6%AC)
   - 게시물 검색
@@ -89,7 +89,7 @@ _더 이상 혼자 울지 마세요,,💦_
 
 
 - [프로젝트 명세서](https://velog.io/@jyleedev/Helpring-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EB%AA%85%EC%84%B8%EC%84%9C)
-- 로그인 실패 에러 메시지 처리
+- [로그인 실패 에러 메시지 처리](https://velog.io/@jyleedev/%ED%9A%8C%EC%9B%90-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EC%8B%A4%ED%8C%A8)
 - [비밀번호 확인 후 회원 정보 수정](https://velog.io/@jyleedev/%ED%9A%8C%EC%9B%90-%EC%A0%95%EB%B3%B4-%EC%88%98%EC%A0%95)
 - [게시물에 파일 첨부](https://velog.io/@jyleedev/%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8JPA%ED%83%80%EC%9E%84%EB%A6%AC%ED%94%84-%EA%B2%8C%EC%8B%9C%EB%AC%BC-%ED%8C%8C%EC%9D%BC-%EC%B2%A8%EB%B6%80)
 - [게시물 좋아요 기능](https://velog.io/@jyleedev/%EA%B2%8C%EC%8B%9C%EB%AC%BC-%EC%A2%8B%EC%95%84%EC%9A%94-%EA%B8%B0%EB%8A%A5)
@@ -99,7 +99,7 @@ _더 이상 혼자 울지 마세요,,💦_
 - [SMTP Gmail 이용 이메일 전송 구현 - 임시 비밀번호 발송 기능](https://velog.io/@jyleedev/%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8-SMTP-Gmail-%EC%9D%B4%EC%9A%A9%ED%95%98%EC%97%AC-%EC%9D%B4%EB%A9%94%EC%9D%BC-%EC%A0%84%EC%86%A1-%EA%B5%AC%ED%98%84-%EC%9E%84%EC%8B%9C-%EB%B9%84%EB%B0%80%EB%B2%88%ED%98%B8-%EB%B0%9C%EC%86%A1-%EA%B8%B0%EB%8A%A5)
 - [스프링 데이터 JPA Pageable, Page](https://velog.io/@jyleedev/%EC%8A%A4%ED%94%84%EB%A7%81-%EB%8D%B0%EC%9D%B4%ED%84%B0-JPA-Pageable-Page)
 - [채널톡 API 이용 관리자 문의 채팅](https://velog.io/@jyleedev/%EC%B1%84%EB%84%90%ED%86%A1-API-%EC%9D%B4%EC%9A%A9%ED%95%98%EC%97%AC-%EA%B4%80%EB%A6%AC%EC%9E%90-%EC%B1%84%ED%8C%85-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0)
-- Thymeleaf CSRF 문제
+- [Thymeleaf CSRF 문제](https://velog.io/@jyleedev/%EC%8A%A4%ED%94%84%EB%A7%81-%EC%8B%9C%ED%81%90%EB%A6%AC%ED%8B%B0-%ED%83%80%EC%9E%84%EB%A6%AC%ED%94%84-csrf-%ED%86%A0%ED%81%B0)
 - [에러 로그 시리즈](https://velog.io/@jyleedev/series/Helpring-%EC%97%90%EB%9F%AC-%EB%A1%9C%EA%B7%B8)
 
 
