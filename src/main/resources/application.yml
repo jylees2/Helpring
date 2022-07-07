@@ -41,6 +41,9 @@ spring:
         #show-sql: true
       format-sql: true
 
+  session:
+    store-type: jdbc
+    
   profiles.active: oauth
 
 file:
