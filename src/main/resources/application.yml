@@ -29,8 +29,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/helpring?serverTimezone=Asia/Seoul
-    username: cos
-    password: cos1234
+    username: jylee
+    password: Asdf!0368
 
   jpa:
     hibernate:
@@ -43,14 +43,16 @@ spring:
 
   session:
     store-type: jdbc
+    jdbc:
+      initialize-schema: always
     
   profiles.active: oauth
 
 file:
   dir:   C:\Users\juyoung\git\Helpring\src\main\resources\static\post_upload\
-  lecture_dir: C:\Users\juyoung\git\Helpring\src\main\resources\static\lecture_upload\
-  course_dir: C:\Users\juyoung\git\Helpring\src\main\resources\static\course_upload\
-
+  lecture_dir: C:\Users\owner\git\Helpring\src\main\resources\static\lecture_upload\
+  course_dir: C:\Users\owner\git\Helpring\src\main\resources\static\course_upload\
+  
 logging:
   level:
     org.hibernate.SQL: debug
