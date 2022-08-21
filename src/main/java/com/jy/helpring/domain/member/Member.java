@@ -11,6 +11,8 @@ import com.jy.helpring.domain.post.Post;
 import lombok.*;
 
 import javax.persistence.*;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +22,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-public class Member extends BaseTimeEntity {
+public class Member extends BaseTimeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
